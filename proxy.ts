@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   try {
     const password = process.env.DASHBOARD_PASSWORD;
 
@@ -30,8 +30,8 @@ export function middleware(request: NextRequest) {
         const sepIndex = decoded.indexOf(':');
         if (sepIndex !== -1) {
           const user = decoded.slice(0, sepIndex);
-          const pwd = decoded.slice(sepIndex + 1);
-          if (user === 'owner' && pwd === password) {
+          const pass = decoded.slice(sepIndex + 1);
+          if (user === 'owner' && pass === password) {
             isAuthenticated = true;
           }
         }
@@ -63,7 +63,7 @@ export function middleware(request: NextRequest) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow');
     return response;
   } catch (err) {
-    console.error('Middleware execution caught error:', err);
+    console.error('Proxy execution caught error:', err);
     return NextResponse.next();
   }
 }
