@@ -1,29 +1,28 @@
 import 'server-only';
 import { randomUUID, createHash } from 'crypto';
-import { database } from './supabase';
+import { database } from './mongodb';
 import { requireAccess } from './auth';
 import { Lead, AgentRun, LeadNote, LeadActivity, UserSettings, FilterOptions, DashboardStats } from './types';
 
-// Persist every record. Never silently fall back to temporary or fictional data.
 async function records<T>(table: string): Promise<T[]> {
   await requireAccess();
-  const rows: T[] = [];
-  for (let start = 0; ; start += 1000) {
-    const { data, error } = await database().from(table).select('data').order('id').range(start, start + 999);
-    if (error) throw new Error(`Storage unavailable: ${error.message}`);
-    rows.push(...(data || []).map(row => row.data as T));
-    if (!data || data.length < 1000) return rows;
-  }
+  const db = await database();
+  const data = await db.collection(table).find({}).toArray();
+  return data.map(doc => doc.data as T);
 }
+
 async function save(table: string, id: string, data: unknown, lead_id?: string) {
   await requireAccess();
-  const { error } = await database().from(table).upsert({ id, data, ...(lead_id ? { lead_id } : {}) });
-  if (error) throw new Error(`Could not save record: ${error.message}`);
+  const db = await database();
+  const doc = { id, data, ...(lead_id ? { lead_id } : {}) };
+  await db.collection(table).updateOne({ id }, { $set: doc }, { upsert: true });
 }
+
 async function activity(lead_id: string, activity_type: string, description: string) {
   const item: LeadActivity = { id: randomUUID(), lead_id, activity_type, description, created_at: new Date().toISOString() };
   await save('la_activities', item.id, item, lead_id);
 }
+
 export async function getLeads(filters: FilterOptions = {}): Promise<Lead[]> {
   let result = await records<Lead>('la_leads');
   const includes = (value: string, query: string) => value.toLowerCase().includes(query.toLowerCase());
@@ -43,12 +42,14 @@ export async function getLeads(filters: FilterOptions = {}): Promise<Lead[]> {
     return filters.sort_dir === 'asc' ? diff : -diff;
   });
 }
+
 export async function getLeadById(id: string): Promise<Lead | null> {
   await requireAccess();
-  const { data, error } = await database().from('la_leads').select('data').eq('id', id).maybeSingle();
-  if (error) throw error;
-  return data?.data || null;
+  const db = await database();
+  const doc = await db.collection('la_leads').findOne({ id });
+  return doc ? doc.data as Lead : null;
 }
+
 export async function updateLead(id: string, updates: Partial<Lead>): Promise<Lead | null> {
   const current = await getLeadById(id);
   if (!current) return null;
@@ -58,25 +59,33 @@ export async function updateLead(id: string, updates: Partial<Lead>): Promise<Le
   if (updates.lead_status && updates.lead_status !== current.lead_status) await activity(id, 'status_change', `Status changed to ${updates.lead_status}`);
   return lead;
 }
+
 export async function addLeads(leads: Lead[]): Promise<Lead[]> {
   const inserted: Lead[] = [];
+  const db = await database();
+  await requireAccess();
   for (const lead of leads) {
-    // Stable identity preserves notes and sales progress across repeated searches.
     const id = createHash('sha256').update([lead.business_name, lead.country, lead.city, lead.address || ''].join('|').toLowerCase()).digest('hex');
     const item = { ...lead, id };
-    await requireAccess();
-    const { data, error } = await database().from('la_leads').upsert({ id, data: item }, { onConflict: 'id', ignoreDuplicates: true }).select('id');
-    if (error) throw error;
-    if (data?.length) { inserted.push(item); await activity(id, 'discovered', `Discovered in ${lead.city}, ${lead.country}`); }
+    
+    // Check if exists
+    const existing = await db.collection('la_leads').findOne({ id });
+    if (!existing) {
+        await save('la_leads', id, item);
+        inserted.push(item); 
+        await activity(id, 'discovered', `Discovered in ${lead.city}, ${lead.country}`);
+    }
   }
   return inserted;
 }
+
 export async function deleteLead(id: string): Promise<boolean> {
   await requireAccess();
-  const { error } = await database().from('la_leads').delete().eq('id', id);
-  if (error) throw error;
+  const db = await database();
+  await db.collection('la_leads').deleteOne({ id });
   return true;
 }
+
 export async function getNotes(leadId: string) { return (await records<LeadNote>('la_notes')).filter(n => n.lead_id === leadId); }
 export async function addNote(leadId: string, content: string, author = 'Me'): Promise<LeadNote> {
   if (!content.trim() || content.length > 10000) throw new Error('Note must contain 1-10,000 characters');
