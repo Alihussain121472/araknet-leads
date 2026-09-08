@@ -54,6 +54,15 @@ const INDUSTRY_AUTOMATION_POTENTIAL: Record<string, { potential: number; service
 };
 
 export function evaluateIndustry(industryName: string) {
+  const normalized = industryName.toLowerCase().trim();
+  const aliases: [RegExp, string][] = [
+    [/dent/, 'Dental Clinic'], [/clinic|doctor|hospital|health|pharmacy/, 'Clinic & Healthcare'],
+    [/restaurant|cafe|coffee|bakery|food/, 'Restaurant'], [/salon|hair|beauty|spa|wellness/, 'Salon & Wellness'],
+    [/plumb|electric|roof|clean|carpenter|hvac|home service/, 'Home Services'], [/car|auto|tyre|mechanic/, 'Automotive'],
+    [/law|legal|account|financ/, 'Legal & Financial'], [/fitness|gym|yoga/, 'Fitness & Gym'], [/shop|retail|boutique|store/, 'Retail & Boutique'],
+  ];
+  for (const [pattern, category] of aliases) if (pattern.test(normalized)) return INDUSTRY_AUTOMATION_POTENTIAL[category];
+  if (!normalized) return INDUSTRY_AUTOMATION_POTENTIAL.Other;
   for (const [key, val] of Object.entries(INDUSTRY_AUTOMATION_POTENTIAL)) {
     if (industryName.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(industryName.toLowerCase())) {
       return val;
@@ -118,9 +127,9 @@ export function auditAndScore(business: {
   // Generate personalized sales pitch reason
   let reason = '';
   if (website_status === 'no_website') {
-    reason = `Established ${business.industry} with ${reviews > 0 ? `${reviews} customer reviews` : 'active local presence'} but no website listed by this directory (verify manually). Prime candidate for a modern web presence & booking system.`;
+    reason = `${business.industry} listing with ${reviews > 0 ? `${reviews} customer reviews` : 'active local presence'} but no website listed by this directory (verify manually). Prime candidate for a modern web presence & booking system.`;
   } else if (website_status === 'outdated') {
-    reason = `Website address suggests a possible modernization opportunity; manual audit required (${business.website_url}). High bounce rate risk on mobile devices. Opportunity to upgrade to high-performance Next.js site.`;
+    reason = `Website address suggests a possible modernization opportunity; manual audit required (${business.website_url}). Check usability and loading performance before suggesting changes.`;
   } else {
     reason = `Website is listed. Automation potential is an industry estimate; website quality, app presence and existing automation have not been verified.`;
   }

@@ -4,6 +4,7 @@ import { searchGooglePlaces, RawBusiness } from './providers/google-places';
 import { searchSerpApi } from './providers/serpapi';
 import { searchOpenStreetMap } from './providers/osm-fallback';
 import { randomUUID } from 'crypto';
+import { leadIntelligence } from '../lead-intelligence';
 import { auditAndScore } from './scorer';
 
 async function discover(params: {
@@ -48,15 +49,17 @@ async function discover(params: {
   try {
     const settings = await getSettings();
     const providers: { name: string; search: () => Promise<RawBusiness[]> }[] = [];
-    if (settings.google_places_api_key) providers.push({ name: 'google_places', search: () => searchGooglePlaces({ city, country, industry, apiKey: settings.google_places_api_key!, limit: maxResults }) });
-    if (settings.serpapi_api_key) providers.push({ name: 'serpapi', search: () => searchSerpApi({ city, country, industry, apiKey: settings.serpapi_api_key!, limit: maxResults }) });
-    providers.push({ name: 'osm', search: () => searchOpenStreetMap({ city, country, industry, limit: maxResults }) });
+    if (settings.google_places_api_key) providers.push({ name: 'google_places', search: () => searchGooglePlaces({ city, country, industry, apiKey: settings.google_places_api_key!, limit: 20 }) });
+    if (settings.serpapi_api_key) providers.push({ name: 'serpapi', search: () => searchSerpApi({ city, country, industry, apiKey: settings.serpapi_api_key!, limit: 20 }) });
+    providers.push({ name: 'osm', search: () => searchOpenStreetMap({ city, country, industry, limit: 20 }) });
     for (let index = 0; index < providers.length; index++) {
       const provider = providers[index];
       logs.push({ time: new Date().toLocaleTimeString(), level: 'info', message: `Searching ${provider.name}...` });
       await updateRun(runId, { logs: [...logs] });
       try {
-        rawBusinesses = await provider.search(); providerUsed = provider.name; break;
+        rawBusinesses = await provider.search(); providerUsed = provider.name;
+        if (rawBusinesses.length || index === providers.length - 1) break;
+        logs.push({ time: new Date().toLocaleTimeString(), level: 'info', message: `${provider.name} returned no listings; checking the next directory.` });
       } catch (error) {
         if (index === providers.length - 1) throw error;
         logs.push({ time: new Date().toLocaleTimeString(), level: 'warn', message: `${provider.name} unavailable; trying the next directory.` });
@@ -126,7 +129,9 @@ async function discover(params: {
     });
 
     // 3. Persist leads
-    const inserted = await addLeads(enrichedLeads);
+    const ranked = enrichedLeads.sort((a,b) => leadIntelligence(b).priority - leadIntelligence(a).priority);
+    const inserted = await addLeads(ranked, maxResults);
+    logs.push({ time: new Date().toLocaleTimeString(), level: 'success', message: `${inserted.length} new leads saved from ${rawBusinesses.length} candidates. Existing leads were preserved.` });
 
     // 4. Update Agent Run Record
     const duration = Date.now() - startTime;

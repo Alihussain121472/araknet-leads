@@ -62,11 +62,12 @@ export async function updateLead(id: string, updates: Partial<Lead>): Promise<Le
   return lead;
 }
 
-export async function addLeads(leads: Lead[]): Promise<Lead[]> {
+export async function addLeads(leads: Lead[], limit = leads.length): Promise<Lead[]> {
   const inserted: Lead[] = [];
   const db = await database();
   await requireAccess();
   for (const lead of leads) {
+    if (inserted.length >= limit) break;
     const id = createHash('sha256').update([lead.business_name, lead.country, lead.city, lead.address || ''].join('|').toLowerCase()).digest('hex');
     const item = { ...lead, id };
     

@@ -43,3 +43,21 @@ test('database diagnostics distinguish configuration problems without leaking co
  assert.match(databaseErrorMessage({name:'MongoParseError'}),/valid MongoDB/);
  assert.equal(databaseErrorMessage({message:'mongodb://secret'}).includes('secret'),false);
 });
+const { leadIntelligence, parseCampaignCities } = load('lib/lead-intelligence.ts');
+test('prioritization is bounded and rewards usable contacts and review evidence', () => {
+ const base={business_name:'Test Clinic',city:'Karachi',industry:'Clinic',website_status:'no_website',ai_automation_potential:95,lead_status:'new',created_at:new Date().toISOString(),suggested_services:['Online booking']};
+ const sparse=leadIntelligence(base), rich=leadIntelligence({...base,phone:'+92 300 1234567',google_reviews_count:150,address:'Business road',google_maps_url:'https://maps.google.com'});
+ assert.ok(rich.priority>sparse.priority); assert.ok(rich.priority<=100);assert.equal(rich.priority,Object.values(rich.breakdown).reduce((a,b)=>a+b,0));
+ assert.equal(sparse.phone,false);assert.match(sparse.nextAction,/verify/);assert.match(rich.draft,/Do you already have one/);assert.match(rich.draft,/\[Your name\]/);
+ assert.match(leadIntelligence({...base,lead_status:'won'}).nextAction,/onboarding/);
+});
+test('campaign city parser trims and deduplicates while preserving distinct targets',()=>{
+ assert.deepEqual(parseCampaignCities(' Karachi, Lahore\nkarachi,, Islamabad '),['Karachi','Lahore','Islamabad']);
+ assert.deepEqual(parseCampaignCities(' , \n'),[]);
+});
+test('industry normalization handles real directory categories',()=>{
+ const {evaluateIndustry}=load('lib/agent/scorer.ts');
+ assert.equal(evaluateIndustry('dentist').potential,95);
+ assert.equal(evaluateIndustry('cafe').potential,90);
+ assert.equal(evaluateIndustry('').potential,70);
+});

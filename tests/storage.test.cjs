@@ -57,3 +57,9 @@ test('settings never expose API keys, retain masked keys, and allow clearing sav
  await store.updateSettings({google_places_api_key:''});assert.equal((await store.getSettings()).google_places_api_key,'');
  await assert.rejects(()=>store.updateSettings({schedule_frequency:'invalid'}),/frequency/);
 });
+test('batch limit applies to new inserts, not duplicate candidates',async()=>{
+ const make=name=>({id:name,business_name:name,country:'Pakistan',city:'Lahore',created_at:new Date().toISOString(),lead_status:'new',tags:[]});
+ await store.addLeads([make('Existing')]);
+ const inserted=await store.addLeads([make('Existing'),make('Fresh one'),make('Fresh two')],1);
+ assert.equal(inserted.length,1);assert.equal(inserted[0].business_name,'Fresh one');
+});

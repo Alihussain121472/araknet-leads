@@ -8,6 +8,7 @@ import { AgentControlSection } from '@/components/sections/AgentControlSection';
 import { LeadsTableSection } from '@/components/sections/LeadsTableSection';
 import { LeadDetailModal } from '@/components/sections/LeadDetailModal';
 import { ExportReportsSection } from '@/components/sections/ExportReportsSection';
+import { GrowthSection } from '@/components/sections/GrowthSection';
 import { SettingsSection } from '@/components/sections/SettingsSection';
 import { apiFetch } from '@/lib/api-client';
 import { Lead, DashboardStats, AgentRun, AgentLog, LeadActivity, LeadNote } from '@/lib/types';
@@ -85,6 +86,12 @@ export default function DashboardPage() {
     fetchAgentStatus();
   }, [fetchLeads, fetchStats, fetchAgentStatus]);
 
+  useEffect(() => {
+    if (!agentRunning) return;
+    const timer = setInterval(() => { void fetchAgentStatus(); }, 5000);
+    return () => clearInterval(timer);
+  }, [agentRunning, fetchAgentStatus]);
+
   // Trigger agent run
   const handleTriggerRun = async (params: {
     country: string;
@@ -114,6 +121,7 @@ export default function DashboardPage() {
       if (res.ok) {
         const data = await res.json();
         if (data.logs) setLogs(data.logs);
+        if (!data.success) throw new Error(data.error || 'Discovery did not complete');
         // Refresh leads & stats
         await fetchLeads();
         await fetchStats();
@@ -247,6 +255,8 @@ export default function DashboardPage() {
           title: 'Export & Market Reports',
           subtitle: 'Dataset exports and geographic/industry intelligence distributions',
         };
+      case 'growth':
+        return { title: 'Growth Workspace', subtitle: 'Search multiple cities, prioritize prospects and prepare outreach' };
       case 'settings':
         return {
           title: 'System Settings & Keys',
@@ -322,6 +332,8 @@ export default function DashboardPage() {
               onExportCsv={handleExportCsv}
             />
           )}
+
+          {activeTab === 'growth' && <GrowthSection leads={leads} busy={agentRunning} onBusyChange={setAgentRunning} onRefresh={async () => { await Promise.all([fetchLeads(), fetchStats(), fetchAgentStatus()]); }} onOpenLead={setSelectedLead} />}
 
           {activeTab === 'settings' && (
             <SettingsSection onSaveSettings={handleSaveSettings} />

@@ -25,6 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, agent
       icon: Bot, 
       badge: agentRunning ? 'Running' : 'Ready' 
     },
+    { id: 'growth', label: 'Growth Workspace', icon: Sparkles, badge: null },
     { id: 'leads', label: 'Leads Directory', icon: Users, badge: null },
     { id: 'reports', label: 'Export & Reports', icon: BarChart3, badge: null },
     { id: 'settings', label: 'Settings', icon: Settings, badge: null },
