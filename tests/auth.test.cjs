@@ -35,3 +35,11 @@ test('scoring marks app status unverified and explains directory evidence', () =
  assert.match(result.opportunity_reason, /verify manually/);
  assert.ok(result.opportunity_score >= 0 && result.opportunity_score <= 100);
 });
+const { databaseErrorMessage } = load('lib/database-error.ts');
+test('database diagnostics distinguish configuration problems without leaking connection strings', () => {
+ assert.match(databaseErrorMessage({code:18,message:'mongodb://secret'}),/credentials/);
+ assert.match(databaseErrorMessage({name:'MongoServerSelectionError',message:'mongodb://secret'}),/Network Access/);
+ assert.match(databaseErrorMessage({code:'ENOTFOUND'}),/resolved/);
+ assert.match(databaseErrorMessage({name:'MongoParseError'}),/valid MongoDB/);
+ assert.equal(databaseErrorMessage({message:'mongodb://secret'}).includes('secret'),false);
+});
