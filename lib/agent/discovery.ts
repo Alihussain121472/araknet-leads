@@ -1,12 +1,12 @@
 import { Lead, AgentRun, AgentLog } from '../types';
-import { getSettings, addLeads, createRun, updateRun } from '../storage';
+import { getSettings, addLeads, createRun, updateRun, acquireAgentLock, releaseAgentLock } from '../storage';
 import { searchGooglePlaces, RawBusiness } from './providers/google-places';
 import { searchSerpApi } from './providers/serpapi';
 import { searchOpenStreetMap } from './providers/osm-fallback';
 import { randomUUID } from 'crypto';
 import { auditAndScore } from './scorer';
 
-export async function runDiscoveryAgent(params: {
+async function discover(params: {
   country: string;
   city: string;
   industry?: string;
@@ -41,55 +41,26 @@ export async function runDiscoveryAgent(params: {
 
   await createRun(initialRun);
 
-  const settings = await getSettings();
+
   let rawBusinesses: RawBusiness[] = [];
   let providerUsed = 'osm';
 
   try {
-    // 1. Determine Provider Strategy
-    if (settings.google_places_api_key && settings.google_places_api_key.trim().length > 10) {
-      logs.push({
-        time: new Date().toLocaleTimeString(),
-        level: 'info',
-        message: 'Querying Google Places API (New Text Search)...',
-      });
-      rawBusinesses = await searchGooglePlaces({
-        city,
-        country,
-        industry,
-        apiKey: settings.google_places_api_key,
-        limit: maxResults,
-      });
-      providerUsed = 'google_places';
-    } else if (settings.serpapi_api_key && settings.serpapi_api_key.trim().length > 10) {
-      logs.push({
-        time: new Date().toLocaleTimeString(),
-        level: 'info',
-        message: 'Querying SerpAPI Google Maps engine...',
-      });
-      rawBusinesses = await searchSerpApi({
-        city,
-        country,
-        industry,
-        apiKey: settings.serpapi_api_key,
-        limit: maxResults,
-      });
-      providerUsed = 'serpapi';
-    } else {
-      logs.push({
-        time: new Date().toLocaleTimeString(),
-        level: 'info',
-        message: 'No paid API keys detected. Connecting to OpenStreetMap / Overpass directory...',
-      });
-      
-      rawBusinesses = await searchOpenStreetMap({
-        city,
-        country,
-        industry,
-        limit: maxResults,
-      });
-
-      providerUsed = 'osm';
+    const settings = await getSettings();
+    const providers: { name: string; search: () => Promise<RawBusiness[]> }[] = [];
+    if (settings.google_places_api_key) providers.push({ name: 'google_places', search: () => searchGooglePlaces({ city, country, industry, apiKey: settings.google_places_api_key!, limit: maxResults }) });
+    if (settings.serpapi_api_key) providers.push({ name: 'serpapi', search: () => searchSerpApi({ city, country, industry, apiKey: settings.serpapi_api_key!, limit: maxResults }) });
+    providers.push({ name: 'osm', search: () => searchOpenStreetMap({ city, country, industry, limit: maxResults }) });
+    for (let index = 0; index < providers.length; index++) {
+      const provider = providers[index];
+      logs.push({ time: new Date().toLocaleTimeString(), level: 'info', message: `Searching ${provider.name}...` });
+      await updateRun(runId, { logs: [...logs] });
+      try {
+        rawBusinesses = await provider.search(); providerUsed = provider.name; break;
+      } catch (error) {
+        if (index === providers.length - 1) throw error;
+        logs.push({ time: new Date().toLocaleTimeString(), level: 'warn', message: `${provider.name} unavailable; trying the next directory.` });
+      }
     }
 
     logs.push({
@@ -163,7 +134,7 @@ export async function runDiscoveryAgent(params: {
       ...initialRun,
       status: 'completed',
       leads_found_count: inserted.length,
-      leads_qualified_count: qualifiedCount,
+      leads_qualified_count: inserted.filter(l => l.opportunity_score >= 70).length,
       run_duration_ms: duration,
       logs,
     };
@@ -193,4 +164,10 @@ export async function runDiscoveryAgent(params: {
     await updateRun(runId, failedRun);
     return { run: failedRun, leads: [] };
   }
+}
+
+export async function runDiscoveryAgent(params: Parameters<typeof discover>[0]) {
+  const token = await acquireAgentLock();
+  if (!token) throw new Error('A discovery run is already in progress. Please wait before starting another.');
+  try { return await discover(params); } finally { await releaseAgentLock(token); }
 }

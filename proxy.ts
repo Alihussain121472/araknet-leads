@@ -1,75 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
-
+import { SESSION_COOKIE, validSession, validBasic, equalSecret } from './lib/session';
 export default function proxy(request: NextRequest) {
-  try {
-    const password = process.env.DASHBOARD_PASSWORD;
-
-    // If password is not configured yet, do not crash
-    if (!password) {
-      return NextResponse.next();
-    }
-
-    const auth = request.headers.get('authorization');
-    const isCron =
-      request.nextUrl.pathname === '/api/agent/run' &&
-      request.method === 'GET' &&
-      request.nextUrl.searchParams.get('schedule') === 'true' &&
-      process.env.CRON_SECRET &&
-      auth === `Bearer ${process.env.CRON_SECRET}`;
-
-    if (isCron) {
-      return NextResponse.next();
-    }
-
-    // Check Basic Authentication safely
-    let isAuthenticated = false;
-    if (auth && auth.startsWith('Basic ')) {
-      try {
-        const base64Token = auth.slice(6).trim();
-        const decoded = atob(base64Token);
-        const sepIndex = decoded.indexOf(':');
-        if (sepIndex !== -1) {
-          const user = decoded.slice(0, sepIndex);
-          const pass = decoded.slice(sepIndex + 1);
-          if (user === 'owner' && pass === password) {
-            isAuthenticated = true;
-          }
-        }
-      } catch {
-        isAuthenticated = false;
-      }
-    }
-
-    if (!isAuthenticated) {
-      return new Response('Sign in with your Araknet owner credentials.', {
-        status: 401,
-        headers: {
-          'WWW-Authenticate': 'Basic realm="Araknet Dashboard"',
-          'Cache-Control': 'no-store, no-cache, must-revalidate',
-        },
-      });
-    }
-
-    // Origin validation for non-GET requests
-    if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
-      const origin = request.headers.get('origin');
-      if (origin && origin !== request.nextUrl.origin) {
-        return new Response('Invalid origin', { status: 403 });
-      }
-    }
-
-    const response = NextResponse.next();
-    response.headers.set('Cache-Control', 'private, no-store');
-    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
-    return response;
-  } catch (err) {
-    console.error('Proxy execution caught error:', err);
-    return NextResponse.next();
+  const path = request.nextUrl.pathname;
+  const password = process.env.DASHBOARD_PASSWORD || '';
+  const auth = request.headers.get('authorization') || '';
+  const isCron = path === '/api/agent/run' && request.method === 'GET' && request.nextUrl.searchParams.get('schedule') === 'true' && equalSecret(auth, process.env.CRON_SECRET ? `Bearer ${process.env.CRON_SECRET}` : '');
+  if (isCron) return NextResponse.next();
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
+    const origin = request.headers.get('origin');
+    let validOrigin = true;
+    try { if (origin) validOrigin = new URL(origin).host === request.headers.get('host'); } catch { validOrigin = false; }
+    if (!validOrigin) return NextResponse.json({ error: 'Invalid origin' }, { status: 403 });
   }
+  if (!password) return NextResponse.json({ error: 'Dashboard access is not configured. Set DASHBOARD_PASSWORD in Vercel.' }, { status: 503 });
+  const authenticated = validSession(request.cookies.get(SESSION_COOKIE)?.value, password) || validBasic(auth, password);
+  if (path === '/api/auth/login' || path === '/api/auth/logout') return NextResponse.next();
+  if (path === '/login') return authenticated ? NextResponse.redirect(new URL('/', request.url)) : NextResponse.next();
+  if (!authenticated) {
+    if (path.startsWith('/api/')) return NextResponse.json({ error: 'Please sign in again.' }, { status: 401 });
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+  const response = NextResponse.next();
+  response.headers.set('Cache-Control', 'private, no-store');
+  response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  return response;
 }
-
-export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|robots.txt).*)',
-  ],
-};
+export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico|robots.txt).*)'] };

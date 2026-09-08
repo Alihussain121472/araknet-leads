@@ -1,33 +1,16 @@
 import 'server-only';
 import { MongoClient } from 'mongodb';
-
-let client: MongoClient | null = null;
-let clientPromise: Promise<MongoClient> | null = null;
-
+let connection: Promise<MongoClient> | undefined;
 export async function database() {
   const uri = process.env.MONGODB_URI;
-
-  if (!uri) {
-    throw new Error('Please add your Mongo URI to environment variables (MONGODB_URI)');
+  if (!uri) throw new Error('Database is not configured. Add MONGODB_URI in Vercel.');
+  if (!connection) {
+    const client = new MongoClient(uri, { serverSelectionTimeoutMS: 10000, connectTimeoutMS: 10000, maxPoolSize: 10 });
+    connection = client.connect().catch(async () => {
+      connection = undefined;
+      await client.close().catch(() => {});
+      throw new Error('Database connection failed. Check the MongoDB credentials and Atlas network access.');
+    });
   }
-
-  if (!clientPromise) {
-    if (process.env.NODE_ENV === 'development') {
-      let globalWithMongo = global as typeof globalThis & {
-        _mongoClientPromise?: Promise<MongoClient>;
-      };
-
-      if (!globalWithMongo._mongoClientPromise) {
-        client = new MongoClient(uri);
-        globalWithMongo._mongoClientPromise = client.connect();
-      }
-      clientPromise = globalWithMongo._mongoClientPromise;
-    } else {
-      client = new MongoClient(uri);
-      clientPromise = client.connect();
-    }
-  }
-
-  const c = await clientPromise;
-  return c.db('araknet');
+  return (await connection).db(process.env.MONGODB_DB || 'araknet');
 }

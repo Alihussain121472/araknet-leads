@@ -93,10 +93,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, agent
               DEV
             </div>
             <div className="overflow-hidden">
-              <p className="text-xs font-semibold text-slate-200 truncate">Agency Workspace</p>
+              <p className="text-xs font-semibold text-slate-200 truncate">Araknet Workspace</p>
               <p className="text-[11px] text-emerald-400 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                Local Engine Online
+                Owner Dashboard
               </p>
             </div>
           </div>

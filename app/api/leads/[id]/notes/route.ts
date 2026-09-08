@@ -19,7 +19,7 @@ export async function POST(
 ) {
   try {
     const body = await request.json();
-    if (!body.content || !body.content.trim()) {
+    if (!body || typeof body.content !== 'string' || !body.content.trim() || body.content.length > 10000) {
       return NextResponse.json({ success: false, error: 'Note content is required' }, { status: 400 });
     }
 

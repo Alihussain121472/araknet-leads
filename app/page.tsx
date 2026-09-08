@@ -9,6 +9,7 @@ import { LeadsTableSection } from '@/components/sections/LeadsTableSection';
 import { LeadDetailModal } from '@/components/sections/LeadDetailModal';
 import { ExportReportsSection } from '@/components/sections/ExportReportsSection';
 import { SettingsSection } from '@/components/sections/SettingsSection';
+import { apiFetch } from '@/lib/api-client';
 import { Lead, DashboardStats, AgentRun, AgentLog, LeadActivity, LeadNote } from '@/lib/types';
 
 export default function DashboardPage() {
@@ -29,17 +30,19 @@ export default function DashboardPage() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isLoadingLeads, setIsLoadingLeads] = useState<boolean>(true);
 
+  const [error, setError] = useState('');
+
   // Fetch leads
   const fetchLeads = useCallback(async () => {
     setIsLoadingLeads(true);
     try {
-      const res = await fetch('/api/leads');
+      const res = await apiFetch('/api/leads');
       if (res.ok) {
         const data = await res.json();
         setLeads(data.leads || []);
       }
     } catch (err) {
-      console.warn('Error fetching leads', err);
+      setError(err instanceof Error ? err.message : 'Error fetching leads');
     } finally {
       setIsLoadingLeads(false);
     }
@@ -48,21 +51,21 @@ export default function DashboardPage() {
   // Fetch KPI stats
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch('/api/stats');
+      const res = await apiFetch('/api/stats');
       if (res.ok) {
         const data = await res.json();
         if (data.stats) setStats(data.stats);
         if (data.recentActivities) setActivities(data.recentActivities);
       }
     } catch (err) {
-      console.warn('Error fetching stats', err);
+      setError(err instanceof Error ? err.message : 'Error fetching stats');
     }
   }, []);
 
   // Fetch agent status & logs
   const fetchAgentStatus = useCallback(async () => {
     try {
-      const res = await fetch('/api/agent/status');
+      const res = await apiFetch('/api/agent/status');
       if (res.ok) {
         const data = await res.json();
         if (data.latestRun) {
@@ -71,7 +74,7 @@ export default function DashboardPage() {
         }
       }
     } catch (err) {
-      console.warn('Error fetching agent status', err);
+      setError(err instanceof Error ? err.message : 'Error fetching agent status');
     }
   }, []);
 
@@ -89,6 +92,8 @@ export default function DashboardPage() {
     industry: string;
     maxResults: number;
   }) => {
+    if (agentRunning) return;
+    setError('');
     setAgentRunning(true);
     setLogs([
       {
@@ -99,7 +104,7 @@ export default function DashboardPage() {
     ]);
 
     try {
-      const res = await fetch('/api/agent/run', {
+      const res = await apiFetch('/api/agent/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params),
@@ -125,8 +130,8 @@ export default function DashboardPage() {
   const handleQuickRun = async () => {
     setActiveTab('agent');
     await handleTriggerRun({
-      country: 'United States',
-      city: 'Austin',
+      country: 'Pakistan',
+      city: 'Karachi',
       industry: 'Clinic & Healthcare',
       maxResults: 8,
     });
@@ -135,7 +140,7 @@ export default function DashboardPage() {
   // Update lead status (e.g. new -> contacted)
   const handleUpdateStatus = async (id: string, newStatus: any) => {
     try {
-      const res = await fetch(`/api/leads/${id}`, {
+      const res = await apiFetch(`/api/leads/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ lead_status: newStatus }),
@@ -151,31 +156,30 @@ export default function DashboardPage() {
         await fetchStats();
       }
     } catch (err) {
-      console.error('Failed to update lead status', err);
+      setError(err instanceof Error ? err.message : 'Failed to update lead status');
     }
   };
 
   // Update tags
   const handleUpdateTags = async (id: string, tags: string[]) => {
     try {
-      await fetch(`/api/leads/${id}`, {
+      const res = await apiFetch(`/api/leads/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tags }),
       });
 
-      setLeads((prev) =>
-        prev.map((l) => (l.id === id ? { ...l, tags } : l))
-      );
+      setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, tags } : l)));
+      setSelectedLead(prev => prev?.id === id ? { ...prev, tags } : prev);
     } catch (err) {
-      console.error('Failed to update tags', err);
+      setError(err instanceof Error ? err.message : 'Failed to update tags');
     }
   };
 
   // Add personal note
   const handleAddNote = async (leadId: string, content: string): Promise<LeadNote | null> => {
     try {
-      const res = await fetch(`/api/leads/${leadId}/notes`, {
+      const res = await apiFetch(`/api/leads/${leadId}/notes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),
@@ -187,7 +191,7 @@ export default function DashboardPage() {
         return data.note;
       }
     } catch (err) {
-      console.error('Failed to add note', err);
+      setError(err instanceof Error ? err.message : 'Failed to add note');
     }
     return null;
   };
@@ -196,14 +200,14 @@ export default function DashboardPage() {
   const handleDeleteLead = async (id: string) => {
     if (!confirm('Are you sure you want to delete this lead?')) return;
     try {
-      const res = await fetch(`/api/leads/${id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/leads/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setLeads((prev) => prev.filter((l) => l.id !== id));
         setSelectedLead(null);
         await fetchStats();
       }
     } catch (err) {
-      console.error('Failed to delete lead', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete lead');
     }
   };
 
@@ -216,7 +220,7 @@ export default function DashboardPage() {
 
   // Save Settings
   const handleSaveSettings = async (newSettings: any) => {
-    const response = await fetch('/api/settings', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(newSettings)});
+    const response = await apiFetch('/api/settings', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(newSettings)});
     if (!response.ok) throw new Error('Settings could not be saved');
   };
 
@@ -278,7 +282,9 @@ export default function DashboardPage() {
           }}
         />
 
-        <main className="p-8 max-w-7xl w-full mx-auto flex-1">
+        <main className="p-4 md:p-8 max-w-7xl w-full mx-auto flex-1">
+          {error && <div role="alert" className="mb-5 rounded-xl border border-rose-800 bg-rose-950 p-4 text-sm">{error}<button onClick={() => setError('')} className="ml-4 underline">Dismiss</button></div>}
+          <form action="/api/auth/logout" method="post" className="mb-4 text-right"><button className="text-xs text-slate-400 hover:text-white">Sign out</button></form>
           {activeTab === 'overview' && (
             <OverviewSection
               stats={stats}

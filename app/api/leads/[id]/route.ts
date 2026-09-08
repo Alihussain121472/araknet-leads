@@ -26,6 +26,7 @@ export async function PATCH(
 ) {
   try {
     const body = await request.json();
+    if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({error: 'Invalid lead update'}, {status: 400});
     const updated = await updateLead((await params).id, body);
     if (!updated) {
       return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });

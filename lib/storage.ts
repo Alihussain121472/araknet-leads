@@ -54,7 +54,9 @@ export async function updateLead(id: string, updates: Partial<Lead>): Promise<Le
   const current = await getLeadById(id);
   if (!current) return null;
   if (updates.lead_status && !['new','contacted','proposal_sent','won','lost'].includes(updates.lead_status)) throw new Error('Invalid lead status');
-  const lead = { ...current, ...updates, id, created_at: current.created_at, updated_at: new Date().toISOString() };
+  if (updates.tags !== undefined && (!Array.isArray(updates.tags) || updates.tags.length > 30 || updates.tags.some(t => typeof t !== 'string' || t.length > 80))) throw new Error('Invalid tags');
+  const allowed = { ...(updates.lead_status ? { lead_status: updates.lead_status } : {}), ...(updates.tags ? { tags: Array.from(new Set(updates.tags)) } : {}) };
+  const lead = { ...current, ...allowed, id, created_at: current.created_at, updated_at: new Date().toISOString() };
   await save('la_leads', id, lead);
   if (updates.lead_status && updates.lead_status !== current.lead_status) await activity(id, 'status_change', `Status changed to ${updates.lead_status}`);
   return lead;
@@ -71,7 +73,8 @@ export async function addLeads(leads: Lead[]): Promise<Lead[]> {
     // Check if exists
     const existing = await db.collection('la_leads').findOne({ id });
     if (!existing) {
-        await save('la_leads', id, item);
+        const result = await db.collection('la_leads').updateOne({ _id: id as any }, { $setOnInsert: { id, data: item } }, { upsert: true });
+        if (!result.upsertedCount) continue;
         inserted.push(item); 
         await activity(id, 'discovered', `Discovered in ${lead.city}, ${lead.country}`);
     }
@@ -82,13 +85,15 @@ export async function addLeads(leads: Lead[]): Promise<Lead[]> {
 export async function deleteLead(id: string): Promise<boolean> {
   await requireAccess();
   const db = await database();
-  await db.collection('la_leads').deleteOne({ id });
-  return true;
+  const result = await db.collection('la_leads').deleteOne({ id });
+  await Promise.all([db.collection('la_notes').deleteMany({lead_id: id}), db.collection('la_activities').deleteMany({lead_id: id})]);
+  return result.deletedCount > 0;
 }
 
 export async function getNotes(leadId: string) { return (await records<LeadNote>('la_notes')).filter(n => n.lead_id === leadId); }
 export async function addNote(leadId: string, content: string, author = 'Me'): Promise<LeadNote> {
-  if (!content.trim() || content.length > 10000) throw new Error('Note must contain 1-10,000 characters');
+  if (!await getLeadById(leadId)) throw new Error('Lead not found');
+  if (typeof content !== 'string' || !content.trim() || content.length > 10000) throw new Error('Note must contain 1-10,000 characters');
   const note = { id: randomUUID(), lead_id: leadId, content, author, created_at: new Date().toISOString() };
   await save('la_notes', note.id, note, leadId);
   await activity(leadId, 'note_added', 'Added a note');
@@ -111,8 +116,17 @@ export async function getSettings(): Promise<UserSettings> {
 }
 export async function updateSettings(updates: Partial<UserSettings>) {
   const current = await getSettings();
-  const clean = { ...updates };
-  for (const key of ['google_places_api_key','serpapi_api_key','apify_api_key','openai_api_key'] as const) if (!clean[key] || clean[key] === 'configured') delete clean[key];
+  if (!updates || typeof updates !== 'object' || Array.isArray(updates)) throw new Error('Invalid settings');
+  const allowedKeys = ['google_places_api_key', 'serpapi_api_key', 'schedule_enabled', 'schedule_frequency', 'schedule_country', 'schedule_city', 'schedule_industry'];
+  const clean = Object.fromEntries(Object.entries(updates).filter(([key]) => allowedKeys.includes(key))) as Partial<UserSettings>;
+  if (clean.schedule_enabled !== undefined && typeof clean.schedule_enabled !== 'boolean') throw new Error('Invalid schedule');
+  if (clean.schedule_frequency && !['daily', 'weekly'].includes(clean.schedule_frequency)) throw new Error('Invalid schedule frequency');
+  for (const key of ['schedule_country', 'schedule_city', 'schedule_industry', 'google_places_api_key', 'serpapi_api_key'] as const) {
+    if (clean[key] !== undefined && (typeof clean[key] !== 'string' || clean[key]!.length > 512)) throw new Error('Invalid settings value');
+  }
+  if (clean.schedule_enabled && !process.env.CRON_SECRET) throw new Error('Scheduling needs CRON_SECRET configured in Vercel.');
+  if (clean.schedule_enabled && (!(clean.schedule_city ?? current.schedule_city).trim() || !(clean.schedule_country ?? current.schedule_country).trim())) throw new Error('Schedule country and city are required');
+  for (const key of ['google_places_api_key','serpapi_api_key','apify_api_key','openai_api_key'] as const) if (clean[key] === undefined || clean[key] === 'configured') delete clean[key];
   const result = { ...current, ...clean, user_id: 'owner' };
   await save('la_settings', 'owner', result); return result;
 }
@@ -125,4 +139,27 @@ export async function getStats(): Promise<DashboardStats> {
   const leads = await getLeads();
   const dealsWon = leads.filter(l => l.lead_status === 'won').length;
   return { totalLeads: leads.length, leadsContacted: leads.filter(l => l.lead_status === 'contacted').length, proposalsSent: leads.filter(l => l.lead_status === 'proposal_sent').length, dealsWon, conversionRate: leads.length ? Math.round(dealsWon / leads.length * 100) : 0, highOpportunityCount: leads.filter(l => l.opportunity_score >= 80).length };
+}
+
+export async function acquireAgentLock(): Promise<string | null> {
+  await requireAccess();
+  const db = await database();
+  const token = randomUUID();
+  const now = Date.now();
+  try {
+    const result = await db.collection('la_locks').findOneAndUpdate(
+      { _id: 'discovery' as any, expires: { $lte: now } },
+      { $set: { token, expires: now + 180000 } },
+      { upsert: true, returnDocument: 'after' }
+    );
+    return result?.token === token ? token : null;
+  } catch (error: any) {
+    if (error.code === 11000) return null;
+    throw error;
+  }
+}
+export async function releaseAgentLock(token: string) {
+  await requireAccess();
+  const db = await database();
+  await db.collection('la_locks').updateOne({ _id: 'discovery' as any, token }, { $set: { expires: 0 } });
 }

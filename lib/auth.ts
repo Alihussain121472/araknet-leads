@@ -1,10 +1,10 @@
 import 'server-only';
-import { headers } from 'next/headers';
-import { createHash, timingSafeEqual } from 'crypto';
+import { cookies, headers } from 'next/headers';
+import { equalSecret, validBasic, validSession, SESSION_COOKIE } from './session';
 export async function requireAccess() {
   const auth = (await headers()).get('authorization') || '';
-  const expected = process.env.DASHBOARD_PASSWORD ? 'Basic ' + Buffer.from(`owner:${process.env.DASHBOARD_PASSWORD}`).toString('base64') : '';
+  const password = process.env.DASHBOARD_PASSWORD || '';
+  const session = (await cookies()).get(SESSION_COOKIE)?.value;
   const cron = process.env.CRON_SECRET ? `Bearer ${process.env.CRON_SECRET}` : '';
-  const equal = (a: string, b: string) => Boolean(b) && timingSafeEqual(createHash('sha256').update(a).digest(), createHash('sha256').update(b).digest());
-  if (!equal(auth, expected) && !equal(auth, cron)) throw new Error('Authentication required');
+  if (!validSession(session, password) && !validBasic(auth, password) && !equalSecret(auth, cron)) throw new Error('Authentication required');
 }

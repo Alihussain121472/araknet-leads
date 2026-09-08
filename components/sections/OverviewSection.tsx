@@ -39,35 +39,35 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
       title: 'Total Leads Found',
       value: stats.totalLeads,
       icon: Users,
-      trend: '+12% this week',
+      trend: 'Saved business records',
       color: 'from-blue-500/20 to-cyan-500/10 border-blue-500/30 text-blue-400',
     },
     {
       title: 'Leads Contacted',
       value: stats.leadsContacted,
       icon: PhoneCall,
-      trend: '3 active in outreach',
+      trend: 'Currently marked contacted',
       color: 'from-amber-500/20 to-orange-500/10 border-amber-500/30 text-amber-400',
     },
     {
       title: 'Proposals Sent',
       value: stats.proposalsSent,
       icon: Send,
-      trend: '2 awaiting review',
+      trend: 'Currently at proposal stage',
       color: 'from-purple-500/20 to-indigo-500/10 border-purple-500/30 text-purple-400',
     },
     {
       title: 'Deals Won',
       value: stats.dealsWon,
       icon: Trophy,
-      trend: '$8,400 pipeline revenue',
+      trend: 'Marked won in your pipeline',
       color: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/30 text-emerald-400',
     },
     {
       title: 'Conversion Rate',
       value: `${stats.conversionRate}%`,
       icon: Percent,
-      trend: 'Avg 4.8 days to close',
+      trend: 'Won deals / all saved leads',
       color: 'from-cyan-500/20 to-blue-500/10 border-cyan-500/30 text-cyan-400',
     },
   ];
@@ -87,7 +87,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
               Ready to discover businesses that need websites & AI automation?
             </h2>
             <p className="text-sm text-slate-300 mt-2 leading-relaxed">
-              Your agent scans Google Places and business directories to find companies with zero website, broken mobile layouts, or high-value automation potential.
+              Your agent searches business directories for website listings and estimates automation opportunities by industry. Verify each opportunity before outreach.
             </p>
           </div>
           <div className="flex-shrink-0">

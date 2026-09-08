@@ -6,9 +6,9 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    if (typeof body.country !== 'string' || typeof body.city !== 'string' || !body.country.trim() || !body.city.trim() || body.city.length > 120 || body.country.length > 120) return NextResponse.json({ success: false, error: 'Valid country and city are required' }, {status: 400});
+    if (!body || typeof body.country !== 'string' || typeof body.city !== 'string' || !body.country.trim() || !body.city.trim() || body.city.length > 120 || body.country.length > 120) return NextResponse.json({ success: false, error: 'Valid country and city are required' }, {status: 400});
     if (body.industry !== undefined && (typeof body.industry !== 'string' || body.industry.length > 100)) return NextResponse.json({ success: false, error: 'Invalid industry' }, {status: 400});
-    const result = await runDiscoveryAgent({ country: body.country.trim(), city: body.city.trim(), industry: body.industry || 'All', maxResults: Math.max(1, Math.min(20, Number(body.maxResults) || 8)), triggered_by: 'manual' });
+    const result = await runDiscoveryAgent({ country: body.country.trim(), city: body.city.trim(), industry: body.industry || 'All', maxResults: Math.max(1, Math.min(20, Math.floor(Number(body.maxResults) || 8))), triggered_by: 'manual' });
     return NextResponse.json({ success: result.run.status === 'completed', runId: result.run.id, status: result.run.status, leadsFound: result.run.leads_found_count, leadsQualified: result.run.leads_qualified_count, logs: result.run.logs, leads: result.leads, error: result.run.error_message });
   } catch (error: any) { return NextResponse.json({ success: false, error: error.message }, {status: 500}); }
 }

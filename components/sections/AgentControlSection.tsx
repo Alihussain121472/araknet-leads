@@ -15,6 +15,7 @@ import {
   Info
 } from 'lucide-react';
 import { COUNTRIES_AND_CITIES, INDUSTRIES } from '@/lib/constants';
+import { apiFetch } from '@/lib/api-client';
 import { AgentRun, AgentLog } from '@/lib/types';
 
 interface AgentControlSectionProps {
@@ -38,13 +39,13 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
   const [scheduleFrequency, setScheduleFrequency] = useState<'daily' | 'weekly'>('daily');
 
   const [scheduleError, setScheduleError] = useState('');
-  useEffect(() => { fetch('/api/settings').then(r=>r.json()).then(d=>{ if(d.settings){ setScheduleEnabled(d.settings.schedule_enabled); setScheduleFrequency(d.settings.schedule_frequency); } }); }, []);
+  useEffect(() => { apiFetch('/api/settings').then(r=>r.json()).then(d=>{ if(d.settings){ setScheduleEnabled(d.settings.schedule_enabled); setScheduleFrequency(d.settings.schedule_frequency); setSelectedCountry(d.settings.schedule_country); setSelectedCity(d.settings.schedule_city); setSelectedIndustry(d.settings.schedule_industry); } }).catch(error => setScheduleError(error.message)); }, []);
   const saveSchedule = async (enabled: boolean, frequency: 'daily' | 'weekly') => {
     try {
-      const res = await fetch('/api/settings', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({schedule_enabled:enabled,schedule_frequency:frequency,schedule_country:selectedCountry,schedule_city:selectedCity,schedule_industry:selectedIndustry}) });
+      const res = await apiFetch('/api/settings', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({schedule_enabled:enabled,schedule_frequency:frequency,schedule_country:selectedCountry,schedule_city:selectedCity,schedule_industry:selectedIndustry}) });
       if (!res.ok) throw new Error('Could not save schedule');
       setScheduleEnabled(enabled); setScheduleFrequency(frequency); setScheduleError('');
-    } catch { setScheduleError('Schedule was not saved. Please retry.'); }
+    } catch (error) { setScheduleError(error instanceof Error ? error.message : 'Schedule was not saved. Please retry.'); }
   };
   const availableCities = COUNTRIES_AND_CITIES[selectedCountry] || ['Custom City'];
 

@@ -45,19 +45,22 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
   // Fetch full details & notes when modal opens
   useEffect(() => {
     if (!lead) return;
+    let active = true;
+    setNotes([]); setActivities([]); setNewNoteContent('');
     const fetchDetails = async () => {
       try {
         const res = await fetch(`/api/leads/${lead.id}`);
         if (res.ok) {
           const data = await res.json();
-          if (data.notes) setNotes(data.notes);
-          if (data.activities) setActivities(data.activities);
+          if (active && data.notes) setNotes(data.notes);
+          if (active && data.activities) setActivities(data.activities);
         }
       } catch (err) {
         console.warn('Failed to load full lead details', err);
       }
     };
     fetchDetails();
+    return () => { active = false; };
   }, [lead]);
 
   if (!lead) return null;
@@ -84,7 +87,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
     if (!lead.tags.includes(cleanTag)) {
       const updatedTags = [...lead.tags, cleanTag];
       await onUpdateTags(lead.id, updatedTags);
-      lead.tags = updatedTags;
+
     }
     setNewTagInput('');
   };
@@ -92,7 +95,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
   const handleRemoveTag = async (tagToRemove: string) => {
     const updatedTags = lead.tags.filter(t => t !== tagToRemove);
     await onUpdateTags(lead.id, updatedTags);
-    lead.tags = updatedTags;
+
   };
 
   return (
@@ -242,7 +245,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                     <p className="text-[10px] text-slate-400">Maps & Street View</p>
                     {lead.google_maps_url ? (
                       <a href={lead.google_maps_url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-cyan-400 hover:underline truncate flex items-center gap-1">
-                        <span>View on Google Maps</span>
+                        <span>View map listing</span>
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     ) : (
