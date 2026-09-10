@@ -1,9 +1,24 @@
 export function databaseErrorMessage(error: unknown): string {
-  const value = error as { name?: string; code?: string | number; cause?: { code?: string | number } };
-  if (value?.code === 18 || value?.code === 8000) return 'MongoDB rejected the database credentials. Update MONGODB_URI with a valid Atlas database username and password.';
-  const code = value?.code || value?.cause?.code;
-  if (code === 'ENOTFOUND' || code === 'ENODATA' || code === 'EAI_AGAIN') return 'MongoDB cluster address could not be resolved. Check the cluster hostname in MONGODB_URI and that the Atlas cluster is active.';
-  if (value?.name === 'MongoServerSelectionError' || value?.name === 'MongoNetworkTimeoutError') return 'MongoDB servers could not be reached. Check that the Atlas cluster is active and its Network Access rules allow your Vercel deployment.';
-  if (value?.name === 'MongoParseError' || value?.name === 'MongoInvalidArgumentError') return 'MONGODB_URI is not a valid MongoDB connection string. Copy the driver connection string from Atlas and URL-encode the database password.';
-  return 'Database connection failed. Check the MongoDB credentials and Atlas network access.';
+  const err = error as any;
+  const msg = err?.message || String(error);
+
+  // If bad credentials
+  if (err?.code === 18 || err?.code === 8000 || msg.includes('auth') || msg.includes('Authentication')) {
+    return 'MongoDB rejected credentials: Username or password in MONGODB_URI is incorrect (make sure to remove any < or > brackets).';
+  }
+
+  // Extract server-level detail from MongoServerSelectionError
+  if (err?.name === 'MongoServerSelectionError' && err?.reason?.servers) {
+    const serverDetails: string[] = [];
+    for (const [, desc] of err.reason.servers) {
+      if (desc?.error?.message) {
+        serverDetails.push(desc.error.message);
+      }
+    }
+    if (serverDetails.length > 0) {
+      return `MongoDB connection issue: ${serverDetails[0]}`;
+    }
+  }
+
+  return `MongoDB connection error: ${msg}`;
 }
