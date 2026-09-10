@@ -1,0 +1,9 @@
+# Ignore documentation and dev files for faster deployment
+docs/
+tests/
+Dockerfile
+docker-compose.yml
+README.md
+*.md
+*.sql
+.env.example
