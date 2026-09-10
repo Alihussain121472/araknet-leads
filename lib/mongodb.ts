@@ -25,6 +25,8 @@ export async function database() {
         serverSelectionTimeoutMS: 10000,
         connectTimeoutMS: 10000,
         maxPoolSize: 10,
+        family: 4, // Force IPv4 to prevent IPv6 routing errors on Atlas
+        tls: true,
       });
     } catch (error) {
       throw new Error(databaseErrorMessage(error));
