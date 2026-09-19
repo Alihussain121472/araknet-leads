@@ -7,7 +7,8 @@ import {
   Settings, 
   Sparkles, 
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  FileText
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -26,6 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, agent
       badge: agentRunning ? 'Running' : 'Ready' 
     },
     { id: 'growth', label: 'Growth Workspace', icon: Sparkles, badge: null },
+    { id: 'proposals', label: 'Proposal Strategist', icon: FileText, badge: 'PRO' },
     { id: 'leads', label: 'Leads Directory', icon: Users, badge: null },
     { id: 'reports', label: 'Export & Reports', icon: BarChart3, badge: null },
     { id: 'settings', label: 'Settings', icon: Settings, badge: null },

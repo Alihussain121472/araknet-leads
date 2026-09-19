@@ -10,6 +10,7 @@ import { LeadDetailModal } from '@/components/sections/LeadDetailModal';
 import { ExportReportsSection } from '@/components/sections/ExportReportsSection';
 import { GrowthSection } from '@/components/sections/GrowthSection';
 import { SettingsSection } from '@/components/sections/SettingsSection';
+import { ProposalAgentSection } from '@/components/sections/ProposalAgentSection';
 import { apiFetch } from '@/lib/api-client';
 import { Lead, DashboardStats, AgentRun, AgentLog, LeadActivity, LeadNote } from '@/lib/types';
 
@@ -334,6 +335,10 @@ export default function DashboardPage() {
           )}
 
           {activeTab === 'growth' && <GrowthSection leads={leads} busy={agentRunning} onBusyChange={setAgentRunning} onRefresh={async () => { await Promise.all([fetchLeads(), fetchStats(), fetchAgentStatus()]); }} onOpenLead={setSelectedLead} />}
+
+          {activeTab === 'proposals' && (
+            <ProposalAgentSection leads={leads} />
+          )}
 
           {activeTab === 'settings' && (
             <SettingsSection onSaveSettings={handleSaveSettings} />
