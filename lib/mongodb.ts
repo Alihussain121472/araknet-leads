@@ -9,6 +9,8 @@ function cleanUri(raw: string): string {
   if ((uri.startsWith('"') && uri.endsWith('"')) || (uri.startsWith("'") && uri.endsWith("'"))) {
     uri = uri.slice(1, -1).trim();
   }
+  // Auto-remove literal '<' and '>' around password if accidentally left in Atlas template
+  uri = uri.replace(/:<([^>@]+)>/, ':$1');
   return uri;
 }
 
