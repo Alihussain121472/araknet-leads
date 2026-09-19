@@ -11,7 +11,7 @@ export function createSession(password: string, now = Date.now()) {
 export function validSession(token: string | undefined, password: string, now = Date.now()) {
   if (!token || !password) return false;
   const [expires, signature, extra] = token.split('.');
-  if (extra || !/^\d+$/.test(expires) || Number(expires) <= now / 1000 || Number(expires) > now / 1000 + SESSION_SECONDS) return false;
+  if (extra || !/^\d+$/.test(expires) || Number(expires) <= now / 1000 || Number(expires) > now / 1000 + SESSION_SECONDS + 300) return false;
   return equalSecret(signature || '', createHmac('sha256', password).update(`owner:${expires}`).digest('hex'));
 }
 export function validBasic(auth: string, password: string) {
