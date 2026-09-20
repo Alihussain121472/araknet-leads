@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { COUNTRIES_AND_CITIES, INDUSTRIES } from '@/lib/constants';
 import { apiFetch } from '@/lib/api-client';
-import { AgentRun, AgentLog } from '@/lib/types';
+import { AgentRun, AgentLog, Lead } from '@/lib/types';
 
 interface AgentControlSectionProps {
   agentRunning: boolean;
