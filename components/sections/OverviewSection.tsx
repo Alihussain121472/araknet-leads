@@ -83,21 +83,21 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
               <Sparkles className="w-3.5 h-3.5" />
               Autonomous Lead Discovery Engine
             </div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               Ready to discover businesses that need websites & AI automation?
             </h2>
-            <p className="text-sm text-slate-300 mt-2 leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
               Your agent searches business directories for website listings and estimates automation opportunities by industry. Verify each opportunity before outreach.
             </p>
           </div>
           <div className="flex-shrink-0">
             <button
               onClick={onLaunchAgent}
-              className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-blue-500/25 transition-all hover:scale-105 active:scale-95"
+              className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-900 dark:text-white font-semibold text-sm shadow-lg shadow-blue-500/25 transition-all hover:scale-105 active:scale-95"
             >
               <Sparkles className="w-4 h-4 text-cyan-300" />
               <span>Launch Discovery Agent</span>
-              <ArrowUpRight className="w-4 h-4 text-white/80" />
+              <ArrowUpRight className="w-4 h-4 text-slate-900 dark:text-white/80" />
             </button>
           </div>
         </div>
@@ -110,17 +110,17 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           return (
             <div
               key={idx}
-              className={`p-5 rounded-2xl bg-gradient-to-br ${card.color} bg-slate-900/60 border backdrop-blur-md shadow-lg`}
+              className={`p-5 rounded-2xl bg-gradient-to-br ${card.color} bg-white dark:bg-slate-900/60 border backdrop-blur-md shadow-lg`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-slate-400">{card.title}</span>
-                <div className="p-2 rounded-xl bg-slate-950/40 border border-slate-800/80">
+                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{card.title}</span>
+                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80">
                   <Icon className="w-4 h-4" />
                 </div>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-extrabold text-white tracking-tight">{card.value}</div>
-                <div className="text-[11px] text-slate-400 mt-1 font-medium">{card.trend}</div>
+                <div className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{card.value}</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">{card.trend}</div>
               </div>
             </div>
           );
@@ -133,11 +133,11 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-amber-400" />
                 Prime Digital Opportunities
               </h3>
-              <p className="text-xs text-slate-400">Businesses with highest need for websites & automation</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Businesses with highest need for websites & automation</p>
             </div>
             <button
               onClick={onViewAllLeads}
@@ -157,12 +157,12 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                 <div
                   key={lead.id}
                   onClick={() => onOpenLead(lead)}
-                  className="group p-4 rounded-xl bg-slate-900/70 hover:bg-slate-800/60 border border-slate-800/80 hover:border-blue-500/40 transition-all cursor-pointer shadow-md"
+                  className="group p-4 rounded-xl bg-white dark:bg-slate-900/70 hover:bg-slate-800/60 border border-slate-200 dark:border-slate-800/80 hover:border-blue-500/40 transition-all cursor-pointer shadow-md"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="space-y-1 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="font-semibold text-slate-100 group-hover:text-blue-400 transition-colors">
+                        <h4 className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-400 transition-colors">
                           {lead.business_name}
                         </h4>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${statusCfg.bg} ${statusCfg.text} ${statusCfg.border}`}>
@@ -173,7 +173,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                         </span>
                       </div>
                       
-                      <p className="text-xs text-slate-400 flex items-center gap-2">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
                         <span>{lead.industry}</span>
                         <span>•</span>
                         <span>{lead.city}, {lead.country}</span>
@@ -186,7 +186,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                       </p>
 
                       {lead.opportunity_reason && (
-                        <p className="text-xs text-slate-300 line-clamp-1 italic pt-1">
+                        <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-1 italic pt-1">
                           &ldquo;{lead.opportunity_reason}&rdquo;
                         </p>
                       )}
@@ -195,9 +195,9 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                     <div className="text-right flex flex-col items-end justify-center">
                       <div className="flex items-baseline gap-1">
                         <span className="text-xl font-black text-amber-400">{lead.opportunity_score}</span>
-                        <span className="text-[10px] text-slate-400 font-semibold">/100</span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">/100</span>
                       </div>
-                      <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Opportunity</span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider">Opportunity</span>
                     </div>
                   </div>
                 </div>
@@ -209,16 +209,16 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
         {/* Right Column: Live Activity Feed */}
         <div className="space-y-4">
           <div>
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Clock className="w-4 h-4 text-blue-400" />
               Recent Activity Feed
             </h3>
-            <p className="text-xs text-slate-400">Chronological timeline of agent & lead events</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Chronological timeline of agent & lead events</p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md space-y-4 shadow-lg">
+          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 backdrop-blur-md space-y-4 shadow-lg">
             {activities.length === 0 ? (
-              <p className="text-xs text-slate-400 text-center py-6">No recent activity recorded yet.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 text-center py-6">No recent activity recorded yet.</p>
             ) : (
               activities.map((act, index) => (
                 <div key={act.id || index} className="flex items-start gap-3 text-xs">
@@ -226,8 +226,8 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                     <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
                   </div>
                   <div className="space-y-0.5 flex-1">
-                    <p className="text-slate-200 font-medium leading-tight">{act.description}</p>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-slate-800 dark:text-slate-200 font-medium leading-tight">{act.description}</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
                       {new Date(act.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>

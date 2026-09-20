@@ -11,12 +11,12 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-950 px-5 text-slate-100">
-      <form action="/api/auth/login" method="post" className="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-900 p-8 space-y-5 shadow-2xl">
+    <main className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-5 text-slate-900 dark:text-slate-100">
+      <form action="/api/auth/login" method="post" className="w-full max-w-sm rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 space-y-5 shadow-2xl">
         <div>
           <p className="text-sm font-semibold text-cyan-400 tracking-wider">ARAKNET</p>
           <h1 className="mt-2 text-2xl font-bold">Welcome back</h1>
-          <p className="mt-2 text-sm text-slate-400">Sign in to your lead discovery dashboard.</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Sign in to your lead discovery dashboard.</p>
         </div>
 
         {errorMessage && (
@@ -33,7 +33,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             autoComplete="email"
             required
             placeholder="you@example.com"
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 p-3 text-slate-100 focus:outline-none focus:border-blue-500"
+            className="mt-2 w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
           />
         </label>
 
@@ -44,15 +44,15 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             type="password"
             autoComplete="current-password"
             required
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 p-3 text-slate-100 focus:outline-none focus:border-blue-500"
+            className="mt-2 w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
           />
         </label>
 
-        <button className="w-full rounded-lg bg-blue-600 p-3 font-semibold text-white hover:bg-blue-500 transition shadow-lg shadow-blue-600/30">
+        <button className="w-full rounded-lg bg-blue-600 p-3 font-semibold text-slate-900 dark:text-white hover:bg-blue-500 transition shadow-lg shadow-blue-600/30">
           Sign in
         </button>
 
-        <div className="pt-4 border-t border-slate-800 text-sm text-center text-slate-400">
+        <div className="pt-4 border-t border-slate-200 dark:border-slate-800 text-sm text-center text-slate-500 dark:text-slate-400">
           Don't have an account? <Link href="/signup" className="text-blue-400 hover:underline">Sign up</Link>
         </div>
       </form>

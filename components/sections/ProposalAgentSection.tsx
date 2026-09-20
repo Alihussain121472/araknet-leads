@@ -284,7 +284,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
   return (
     <div className="space-y-6">
       {/* Top Header Card with Mode Switcher */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>
@@ -292,7 +292,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
               <span className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
                 {activeMode === 'freelance' ? <Briefcase className="w-5 h-5" /> : <GraduationCap className="w-5 h-5 text-indigo-400" />}
               </span>
-              <h2 className="text-xl font-bold text-white tracking-tight">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                 {activeMode === 'freelance' ? 'Proposal Strategist Agent' : 'Academic & Professional Assistant'}
               </h2>
               <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
@@ -303,7 +303,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                 {activeMode === 'freelance' ? '$2M+ Win Engine' : "Bachelor's • Master's • PhD"}
               </span>
             </div>
-            <p className="text-xs text-slate-400 max-w-2xl">
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-2xl">
               {activeMode === 'freelance'
                 ? 'Clients do not hire the most qualified freelancer—they hire who makes them feel most understood and confident. Dual psychological variations with live red-flag checks.'
                 : "Designed for students and researchers at all levels. Calibrates tone, depth, and scholarly complexity across Education, Business, and Social Media into 7 structured sections."}
@@ -312,13 +312,13 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
 
           {/* Mode Switcher Buttons */}
           <div className="flex items-center gap-2">
-            <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 shadow-inner">
+            <div className="flex bg-slate-50 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner">
               <button
                 onClick={() => setActiveMode('freelance')}
                 className={`text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
                   activeMode === 'freelance'
-                    ? 'bg-emerald-600 text-white font-semibold shadow'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-emerald-600 text-slate-900 dark:text-white font-semibold shadow'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200'
                 }`}
               >
                 <Briefcase className="w-3.5 h-3.5" />
@@ -328,8 +328,8 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                 onClick={() => setActiveMode('academic')}
                 className={`text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
                   activeMode === 'academic'
-                    ? 'bg-indigo-600 text-white font-semibold shadow'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-indigo-600 text-slate-900 dark:text-white font-semibold shadow'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200'
                 }`}
               >
                 <GraduationCap className="w-3.5 h-3.5" />
@@ -339,7 +339,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
 
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
               title="Configure AI Engine"
             >
               <Sliders className="w-4 h-4" />
@@ -349,13 +349,13 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
 
         {/* AI Engine Settings Bar (collapsible) */}
         {showSettings && (
-          <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             <div>
-              <label className="block text-slate-400 font-medium mb-1">AI Strategy Engine</label>
+              <label className="block text-slate-500 dark:text-slate-400 font-medium mb-1">AI Strategy Engine</label>
               <select
                 value={provider}
                 onChange={(e) => setProvider(e.target.value as any)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
               >
                 <option value="offline">Araknet Deterministic Engine (Offline - Zero Latency)</option>
                 <option value="gemini">Google Gemini (Gemini 2.5 Flash / 1.5 Pro)</option>
@@ -365,13 +365,13 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
             </div>
             {provider !== 'offline' && (
               <div>
-                <label className="block text-slate-400 font-medium mb-1">{provider.toUpperCase()} API Key (Optional)</label>
+                <label className="block text-slate-500 dark:text-slate-400 font-medium mb-1">{provider.toUpperCase()} API Key (Optional)</label>
                 <input
                   type="password"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="Defaults to server environment variable if empty"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
                 />
               </div>
             )}
@@ -384,10 +384,10 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* LEFT COLUMN: Inputs */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
               {/* Header with Lead Importer */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <span className="text-sm font-semibold text-white flex items-center gap-2">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                <span className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                   <FileText className="w-4 h-4 text-blue-400" /> Pitch Parameters
                 </span>
 
@@ -417,19 +417,19 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
 
               {/* Quick Presets */}
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Load Preset Scenario</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Load Preset Scenario</label>
                 <div className="flex flex-wrap gap-1.5">
                   <button
                     type="button"
                     onClick={() => loadPreset('1')}
-                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     ✨ AI Full-Stack
                   </button>
                   <button
                     type="button"
                     onClick={() => loadPreset('2')}
-                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     📧 CRO Direct Email
                   </button>
@@ -443,7 +443,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                   <button
                     type="button"
                     onClick={() => loadPreset('4')}
-                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     💼 Agency RFP
                   </button>
@@ -453,7 +453,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
               {/* 1. Platform Selection */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-medium text-slate-400">1. Target Platform</label>
+                  <label className="text-xs font-medium text-slate-500 dark:text-slate-400">1. Target Platform</label>
                   <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded">
                     Target: {platformLengths[platform]}
                   </span>
@@ -466,8 +466,8 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                       onClick={() => setPlatform(p)}
                       className={`text-xs py-2 px-2 rounded-xl border transition text-center truncate ${
                         platform === p
-                          ? 'bg-blue-600 text-white font-medium shadow-md shadow-blue-600/30 border-blue-500'
-                          : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800 border-slate-700'
+                          ? 'bg-blue-600 text-slate-900 dark:text-white font-medium shadow-md shadow-blue-600/30 border-blue-500'
+                          : 'bg-slate-800/80 text-slate-500 dark:text-slate-400 hover:bg-slate-800 border-slate-300 dark:border-slate-700'
                       }`}
                     >
                       {p}
@@ -478,7 +478,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
 
               {/* 2. Tone Selection */}
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">2. Tone of Voice</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">2. Tone of Voice</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                   {(['Professional', 'Friendly', 'Direct', 'Consultative'] as Tone[]).map((t) => (
                     <button
@@ -487,8 +487,8 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                       onClick={() => setTone(t)}
                       className={`text-xs py-1.5 px-2 rounded-xl border transition text-center truncate ${
                         tone === t
-                          ? 'bg-slate-700 text-white border-slate-500 font-medium shadow'
-                          : 'bg-slate-800/50 text-slate-400 hover:bg-slate-800 border-slate-700/80'
+                          ? 'bg-slate-700 text-slate-900 dark:text-white border-slate-500 font-medium shadow'
+                          : 'bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:bg-slate-800 border-slate-300 dark:border-slate-700/80'
                       }`}
                     >
                       {t}
@@ -500,7 +500,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
               {/* 3. Job Description */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-medium text-slate-300">
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-300">
                     3. Client Job Post / Project Brief <span className="text-red-400">*</span>
                   </label>
                   <span className="text-[11px] text-slate-500">{jobDescription.length} chars</span>
@@ -510,7 +510,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
                   placeholder="Paste the full job posting, specifications, budget hints, or requirements here..."
-                  className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition resize-y"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition resize-y"
                 />
               </div>
 
@@ -527,60 +527,60 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
 
               {/* 4. Freelancer Profile */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">4. Your Freelancer Profile / Niche</label>
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">4. Your Freelancer Profile / Niche</label>
                 <input
                   type="text"
                   value={freelancerProfile}
                   onChange={(e) => setFreelancerProfile(e.target.value)}
                   placeholder="e.g. Senior Full-Stack & AI Systems Engineer with 7 years production experience"
-                  className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"
                 />
               </div>
 
               {/* 5. Relevant Experience */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">5. Relevant Experience for THIS Job</label>
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">5. Relevant Experience for THIS Job</label>
                 <textarea
                   rows={2}
                   value={relevantExperience}
                   onChange={(e) => setRelevantExperience(e.target.value)}
                   placeholder="What past project directly maps to their problem?"
-                  className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 resize-y"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 resize-y"
                 />
               </div>
 
               {/* 6. Proposed Approach */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">6. Proposed Technical Approach</label>
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">6. Proposed Technical Approach</label>
                 <textarea
                   rows={2}
                   value={proposedApproach}
                   onChange={(e) => setProposedApproach(e.target.value)}
                   placeholder="Your concrete workflow, tools, architecture, and what you do differently"
-                  className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 resize-y"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 resize-y"
                 />
               </div>
 
               {/* 7 & 8: Budget & Achievements */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">7. Budget Range / Rate</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">7. Budget Range / Rate</label>
                   <input
                     type="text"
                     value={budgetRange}
                     onChange={(e) => setBudgetRange(e.target.value)}
                     placeholder="e.g. $4,000 - $6,000"
-                    className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">8. Quantifiable Result / Proof</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">8. Quantifiable Result / Proof</label>
                   <input
                     type="text"
                     value={achievements}
                     onChange={(e) => setAchievements(e.target.value)}
                     placeholder="e.g. Reduced latency by 68%"
-                    className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
@@ -590,7 +590,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                 <button
                   onClick={handleGenerate}
                   disabled={loading || !jobDescription.trim()}
-                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-500 hover:from-blue-500 hover:to-teal-400 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-500 hover:from-blue-500 hover:to-teal-400 text-slate-900 dark:text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -611,30 +611,30 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
           {/* RIGHT COLUMN: Output (7 cols) */}
           <div className="lg:col-span-7 space-y-5">
             {!result && !loading && (
-              <div className="bg-slate-900/50 border border-dashed border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[480px]">
-                <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-slate-400 mb-4">
+              <div className="bg-white dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[480px]">
+                <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 mb-4">
                   <Sparkles className="w-7 h-7 text-blue-400" />
                 </div>
-                <h3 className="text-base font-semibold text-slate-200 mb-1">No proposal generated yet</h3>
-                <p className="text-xs text-slate-400 max-w-sm mb-5">
+                <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">No proposal generated yet</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mb-5">
                   Fill in your client job details on the left, or load one of the presets to see both variations with instant coaching.
                 </p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   <button
                     onClick={() => loadPreset('1')}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     Load AI SaaS Preset
                   </button>
                   <button
                     onClick={() => loadPreset('2')}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     Load CRO Direct Email Preset
                   </button>
                   <button
                     onClick={() => loadPreset('4')}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     Load Agency RFP Preset
                   </button>
@@ -643,7 +643,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
             )}
 
             {loading && (
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 animate-pulse">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4 animate-pulse">
                 <div className="h-6 bg-slate-800 rounded w-1/3" />
                 <div className="h-24 bg-slate-800/60 rounded" />
                 <div className="h-28 bg-slate-800/60 rounded" />
@@ -664,22 +664,22 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                 )}
 
                 {/* Top Action Bar */}
-                <div className="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3">
-                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                <div className="flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3">
+                  <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                     <span className="w-2 h-2 rounded-full bg-emerald-400" />
                     <span>Engine: {result.provider_used}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => copyToClipboard(result.raw_formatted, 'full')}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 border border-slate-700"
+                      className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition flex items-center gap-1.5 border border-slate-300 dark:border-slate-700"
                     >
                       {copiedFull ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{copiedFull ? 'Copied Full Output!' : 'Copy Full Output'}</span>
                     </button>
                     <button
                       onClick={downloadMarkdown}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-1.5 shadow-md shadow-blue-600/30"
+                      className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white transition flex items-center gap-1.5 shadow-md shadow-blue-600/30"
                     >
                       <Download className="w-3.5 h-3.5" />
                       <span>Download .md</span>
@@ -688,19 +688,19 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                 </div>
 
                 {/* VARIATION A CARD */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
                         VARIATION A
                       </span>
-                      <span className="text-xs text-slate-400 font-medium">Lead with Client Pain</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Lead with Client Pain</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-xs font-mono text-slate-500">{result.variation_a.word_count} words</span>
                       <button
                         onClick={() => copyToClipboard(result.variation_a.text, 'a')}
-                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition"
                         title="Copy Variation A"
                       >
                         {copiedA ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -715,25 +715,25 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                     </div>
                   )}
 
-                  <div className="text-xs text-slate-200 leading-relaxed whitespace-pre-line font-sans">
+                  <div className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line font-sans">
                     {result.variation_a.text}
                   </div>
                 </div>
 
                 {/* VARIATION B CARD */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-semibold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
                         VARIATION B
                       </span>
-                      <span className="text-xs text-slate-400 font-medium">Lead with Bold Result</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Lead with Bold Result</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-xs font-mono text-slate-500">{result.variation_b.word_count} words</span>
                       <button
                         onClick={() => copyToClipboard(result.variation_b.text, 'b')}
-                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition"
                         title="Copy Variation B"
                       >
                         {copiedB ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -748,14 +748,14 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                     </div>
                   )}
 
-                  <div className="text-xs text-slate-200 leading-relaxed whitespace-pre-line font-sans">
+                  <div className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line font-sans">
                     {result.variation_b.text}
                   </div>
                 </div>
 
                 {/* COACHING NOTE CARD */}
                 <div className="bg-gradient-to-b from-slate-900 to-slate-950 border border-emerald-500/30 rounded-2xl p-5 shadow-xl space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
                     <div className="flex items-center gap-2 font-bold text-xs text-emerald-400">
                       <BarChart2 className="w-4 h-4" /> 📊 STRATEGIC COACHING NOTE
                     </div>
@@ -765,24 +765,24 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                   </div>
 
                   <div className="grid grid-cols-1 gap-2.5 text-xs">
-                    <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-800">
-                      <span className="font-semibold text-slate-200 block mb-1">🎯 Stronger Variation Rationale</span>
-                      <p className="text-slate-400">{result.coaching_note.stronger_reason}</p>
+                    <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-200 dark:border-slate-800">
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 block mb-1">🎯 Stronger Variation Rationale</span>
+                      <p className="text-slate-500 dark:text-slate-400">{result.coaching_note.stronger_reason}</p>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-800">
-                      <span className="font-semibold text-slate-200 block mb-1">✍️ What to Personalize Before Sending</span>
-                      <p className="text-slate-400">{result.coaching_note.what_to_personalize}</p>
+                    <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-200 dark:border-slate-800">
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 block mb-1">✍️ What to Personalize Before Sending</span>
+                      <p className="text-slate-500 dark:text-slate-400">{result.coaching_note.what_to_personalize}</p>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-800">
-                      <span className="font-semibold text-slate-200 block mb-1">💡 Smart Question to Add</span>
-                      <p className="text-slate-400 italic">&ldquo;{result.coaching_note.smart_question}&rdquo;</p>
+                    <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-200 dark:border-slate-800">
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 block mb-1">💡 Smart Question to Add</span>
+                      <p className="text-slate-500 dark:text-slate-400 italic">&ldquo;{result.coaching_note.smart_question}&rdquo;</p>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-800">
-                      <span className="font-semibold text-slate-200 block mb-1">🏆 Win Probability Factors</span>
-                      <p className="text-slate-400">{result.coaching_note.win_probability_factors}</p>
+                    <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-200 dark:border-slate-800">
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 block mb-1">🏆 Win Probability Factors</span>
+                      <p className="text-slate-500 dark:text-slate-400">{result.coaching_note.win_probability_factors}</p>
                     </div>
                   </div>
                 </div>
@@ -797,9 +797,9 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* LEFT COLUMN: Academic 4-Step Wizard (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <span className="text-sm font-semibold text-white flex items-center gap-2">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                <span className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                   <GraduationCap className="w-4 h-4 text-indigo-400" /> Academic & Professional Wizard
                 </span>
                 <span className="text-xs px-2.5 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-mono">
@@ -809,26 +809,26 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
 
               {/* Quick Academic Presets */}
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Load Academic Presets</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Load Academic Presets</label>
                 <div className="flex flex-wrap gap-1.5">
                   <button
                     type="button"
                     onClick={() => loadAcademicPreset('1')}
-                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     🎓 Bachelor's (Education)
                   </button>
                   <button
                     type="button"
                     onClick={() => loadAcademicPreset('2')}
-                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     💼 Master's (Business)
                   </button>
                   <button
                     type="button"
                     onClick={() => loadAcademicPreset('3')}
-                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     🔬 PhD (Social Media)
                   </button>
@@ -837,7 +837,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
 
               {/* STEP 1: Academic Level */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">
                   STEP 1 — What is your academic level? <span className="text-indigo-400">*</span>
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -848,15 +848,15 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                       onClick={() => setAcademicLevel(lvl)}
                       className={`text-xs py-2 px-2 rounded-xl border text-center transition ${
                         academicLevel === lvl
-                          ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-600/30 border-indigo-500'
-                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border-slate-700'
+                          ? 'bg-indigo-600 text-slate-900 dark:text-white font-semibold shadow-md shadow-indigo-600/30 border-indigo-500'
+                          : 'bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-700 border-slate-300 dark:border-slate-700'
                       }`}
                     >
                       {lvl}
                     </button>
                   ))}
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1.5 italic">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 italic">
                   {academicLevel === "Bachelor's" && '• Clear, foundational, accessible language & direct practical application'}
                   {academicLevel === "Master's" && '• Analytical, structured, research-aware language & empirical frameworks'}
                   {academicLevel === 'PhD' && '• Advanced, scholarly, gap-focused, methodology-rich & epistemological depth'}
@@ -865,7 +865,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
 
               {/* STEP 2: Proposal Type */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">
                   STEP 2 — What type of proposal would you like to write? <span className="text-indigo-400">*</span>
                 </label>
                 <div className="grid grid-cols-1 gap-1.5">
@@ -877,7 +877,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                       className={`text-xs py-2 px-3 rounded-xl border text-left transition flex items-center justify-between ${
                         academicType === pt
                           ? 'bg-slate-800 text-indigo-400 border-indigo-500 font-semibold ring-1 ring-indigo-500/50'
-                          : 'bg-slate-950/60 text-slate-400 hover:bg-slate-800 border-slate-800'
+                          : 'bg-slate-50 dark:bg-slate-950/60 text-slate-500 dark:text-slate-400 hover:bg-slate-800 border-slate-200 dark:border-slate-800'
                       }`}
                     >
                       <span>{pt}</span>
@@ -888,11 +888,11 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
               </div>
 
               {/* STEP 3: Gather Details */}
-              <div className="space-y-3 pt-1 border-t border-slate-800">
-                <span className="text-xs font-semibold text-slate-300 block">STEP 3 — Gather Details</span>
+              <div className="space-y-3 pt-1 border-t border-slate-200 dark:border-slate-800">
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">STEP 3 — Gather Details</span>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
                     Topic / Idea <span className="text-indigo-400">*</span>
                   </label>
                   <input
@@ -900,12 +900,12 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                     value={academicTopic}
                     onChange={(e) => setAcademicTopic(e.target.value)}
                     placeholder="e.g. Gamified Mobile Microlearning in STEM Education"
-                    className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
                     Purpose / Objective <span className="text-indigo-400">*</span>
                   </label>
                   <textarea
@@ -913,29 +913,29 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                     value={academicPurpose}
                     onChange={(e) => setAcademicPurpose(e.target.value)}
                     placeholder="e.g. Evaluate whether mobile problem sets increase conceptual recall compared to worksheets"
-                    className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-y"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-y"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">Target Audience</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Target Audience</label>
                   <input
                     type="text"
                     value={academicAudience}
                     onChange={(e) => setAcademicAudience(e.target.value)}
                     placeholder="e.g. Academic Faculty Review Committee / Enterprise Stakeholders"
-                    className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">Specific Requirements / Guidelines</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Specific Requirements / Guidelines</label>
                   <input
                     type="text"
                     value={academicRequirements}
                     onChange={(e) => setAcademicRequirements(e.target.value)}
                     placeholder="e.g. APA 7th edition, 4-month pilot scope"
-                    className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
               </div>
@@ -945,7 +945,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                 <button
                   onClick={handleGenerateAcademic}
                   disabled={academicLoading || !academicTopic.trim() || !academicPurpose.trim()}
-                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-teal-500 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-teal-500 hover:from-indigo-500 hover:to-purple-500 text-slate-900 dark:text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {academicLoading ? (
                     <>
@@ -966,30 +966,30 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
           {/* RIGHT COLUMN: Academic Output (7 cols) */}
           <div className="lg:col-span-7 space-y-5">
             {!academicResult && !academicLoading && (
-              <div className="bg-slate-900/50 border border-dashed border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[480px]">
-                <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-slate-400 mb-4">
+              <div className="bg-white dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[480px]">
+                <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 mb-4">
                   <GraduationCap className="w-7 h-7 text-indigo-400" />
                 </div>
-                <h3 className="text-base font-semibold text-slate-200 mb-1">No academic proposal generated yet</h3>
-                <p className="text-xs text-slate-400 max-w-sm mb-5">
+                <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">No academic proposal generated yet</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mb-5">
                   Select your academic level and proposal type, then fill in details to generate a comprehensive 7-section structured proposal.
                 </p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   <button
                     onClick={() => loadAcademicPreset('1')}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     Bachelor's Demo
                   </button>
                   <button
                     onClick={() => loadAcademicPreset('2')}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     Master's Demo
                   </button>
                   <button
                     onClick={() => loadAcademicPreset('3')}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition"
                   >
                     PhD Demo
                   </button>
@@ -998,7 +998,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
             )}
 
             {academicLoading && (
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 animate-pulse">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4 animate-pulse">
                 <div className="h-6 bg-slate-800 rounded w-2/3" />
                 <div className="h-20 bg-slate-800/60 rounded" />
                 <div className="h-24 bg-slate-800/60 rounded" />
@@ -1009,31 +1009,31 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
             {academicResult && (
               <div className="space-y-4">
                 {/* Header Card */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                           {academicResult.academic_level}
                         </span>
-                        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
                           {academicResult.proposal_type}
                         </span>
                       </div>
-                      <h2 className="text-base font-bold text-white">{academicResult.title}</h2>
+                      <h2 className="text-base font-bold text-slate-900 dark:text-white">{academicResult.title}</h2>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
                       <button
                         onClick={copyAcademicMarkdown}
-                        className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 border border-slate-700"
+                        className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition flex items-center gap-1.5 border border-slate-300 dark:border-slate-700"
                       >
                         {academicCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{academicCopied ? 'Copied!' : 'Copy Markdown'}</span>
                       </button>
                       <button
                         onClick={downloadAcademicMarkdown}
-                        className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30"
+                        className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-slate-900 dark:text-white transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30"
                       >
                         <Download className="w-3.5 h-3.5" />
                         <span>Download .md</span>
@@ -1044,33 +1044,33 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                   {/* Calibration Insights description */}
                   <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <span>{academicResult.level_insights}</span>
-                    <span className="font-mono text-slate-400 shrink-0">{academicResult.word_count} words</span>
+                    <span className="font-mono text-slate-500 dark:text-slate-400 shrink-0">{academicResult.word_count} words</span>
                   </div>
                 </div>
 
                 {/* 7 Section Cards */}
                 {/* 1. Title */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
                   <span className="text-xs font-bold text-indigo-400">1. Title</span>
-                  <p className="text-xs text-slate-200 font-medium">{academicResult.title}</p>
+                  <p className="text-xs text-slate-800 dark:text-slate-200 font-medium">{academicResult.title}</p>
                 </div>
 
                 {/* 2. Introduction / Background */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
                   <span className="text-xs font-bold text-indigo-400">2. Introduction / Background</span>
-                  <p className="text-xs text-slate-300 leading-relaxed">{academicResult.introduction_background}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{academicResult.introduction_background}</p>
                 </div>
 
                 {/* 3. Problem Statement */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
                   <span className="text-xs font-bold text-indigo-400">3. Problem Statement</span>
-                  <p className="text-xs text-slate-300 leading-relaxed">{academicResult.problem_statement}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{academicResult.problem_statement}</p>
                 </div>
 
                 {/* 4. Objectives */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
                   <span className="text-xs font-bold text-indigo-400">4. Objectives</span>
-                  <ul className="list-disc list-inside space-y-1 text-xs text-slate-300">
+                  <ul className="list-disc list-inside space-y-1 text-xs text-slate-600 dark:text-slate-300">
                     {academicResult.objectives.map((obj, i) => (
                       <li key={i} className="leading-relaxed">{obj}</li>
                     ))}
@@ -1078,21 +1078,21 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({ lead
                 </div>
 
                 {/* 5. Methodology or Approach */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
                   <span className="text-xs font-bold text-indigo-400">5. Methodology or Approach</span>
-                  <p className="text-xs text-slate-300 leading-relaxed">{academicResult.methodology_approach}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{academicResult.methodology_approach}</p>
                 </div>
 
                 {/* 6. Expected Outcomes / Benefits */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
                   <span className="text-xs font-bold text-indigo-400">6. Expected Outcomes / Benefits</span>
-                  <p className="text-xs text-slate-300 leading-relaxed">{academicResult.expected_outcomes_benefits}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{academicResult.expected_outcomes_benefits}</p>
                 </div>
 
                 {/* 7. Conclusion */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow space-y-1.5">
                   <span className="text-xs font-bold text-indigo-400">7. Conclusion</span>
-                  <p className="text-xs text-slate-300 leading-relaxed">{academicResult.conclusion}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{academicResult.conclusion}</p>
                 </div>
               </div>
             )}

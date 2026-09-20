@@ -73,13 +73,13 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left 2 Cols: Form Controls */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md shadow-xl space-y-6">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 backdrop-blur-md shadow-xl space-y-6">
             <div>
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bot className="w-5 h-5 text-blue-400" />
                 Discovery Agent Controls
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Configure your target geographic territory and vertical market to trigger autonomous discovery.
               </p>
             </div>
@@ -88,27 +88,27 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Country */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-blue-400" />
                   Target Country
                 </label>
-                <input aria-label="Target Country" list="countries" value={selectedCountry} onChange={e=>handleCountryChange(e.target.value)} disabled={agentRunning} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3" />
+                <input aria-label="Target Country" list="countries" value={selectedCountry} onChange={e=>handleCountryChange(e.target.value)} disabled={agentRunning} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-3" />
                 <datalist id="countries">{Object.keys(COUNTRIES_AND_CITIES).map(c=><option key={c} value={c}/>)}</datalist>
               </div>
 
               {/* City */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5 text-cyan-400" />
                   Target City
                 </label>
-                <input aria-label="Target City" list="cities" value={selectedCity} onChange={e=>setSelectedCity(e.target.value)} disabled={agentRunning} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3" />
+                <input aria-label="Target City" list="cities" value={selectedCity} onChange={e=>setSelectedCity(e.target.value)} disabled={agentRunning} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-3" />
                 <datalist id="cities">{availableCities.map(c=><option key={c} value={c}/>)}</datalist>
               </div>
 
               {/* Industry */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
                   <Layers className="w-3.5 h-3.5 text-indigo-400" />
                   Target Industry
                 </label>
@@ -116,10 +116,10 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
                   value={selectedIndustry}
                   onChange={(e) => setSelectedIndustry(e.target.value)}
                   disabled={agentRunning}
-                  className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
+                  className="w-full bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
                 >
                   {INDUSTRIES.map((ind) => (
-                    <option key={ind} value={ind} className="bg-slate-900 text-slate-200">
+                    <option key={ind} value={ind} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
                       {ind}
                     </option>
                   ))}
@@ -128,7 +128,7 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
 
               {/* Max Batch Count */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                   Batch Size (Leads per Run)
                 </label>
@@ -136,28 +136,28 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
                   value={maxResults}
                   onChange={(e) => setMaxResults(Number(e.target.value))}
                   disabled={agentRunning}
-                  className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
+                  className="w-full bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
                 >
-                  <option value={5} className="bg-slate-900">5 Businesses</option>
-                  <option value={8} className="bg-slate-900">8 Businesses (Recommended)</option>
-                  <option value={15} className="bg-slate-900">15 Businesses</option>
-                  <option value={20} className="bg-slate-900">20 Businesses</option>
+                  <option value={5} className="bg-white dark:bg-slate-900">5 Businesses</option>
+                  <option value={8} className="bg-white dark:bg-slate-900">8 Businesses (Recommended)</option>
+                  <option value={15} className="bg-white dark:bg-slate-900">15 Businesses</option>
+                  <option value={20} className="bg-white dark:bg-slate-900">20 Businesses</option>
                 </select>
               </div>
             </div>
 
             {/* Run Action & Status Indicator */}
-            <div className="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="pt-4 border-t border-slate-200 dark:border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className={`w-3 h-3 rounded-full ${
                   agentRunning ? 'bg-amber-400 animate-ping' : latestRun?.status === 'completed' ? 'bg-emerald-400' : 'bg-blue-400'
                 }`} />
                 <div>
-                  <p className="text-xs font-semibold text-slate-200">
+                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
                     Status: {agentRunning ? 'Scanning & Auditing...' : latestRun?.status === 'completed' ? 'Last Run Completed' : 'Idle'}
                   </p>
                   {latestRun?.leads_found_count !== undefined && (
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
                       Last scan produced {latestRun.leads_found_count} leads in {latestRun.city} ({latestRun.run_duration_ms ? `${(latestRun.run_duration_ms / 1000).toFixed(1)}s` : 'fast'})
                     </p>
                   )}
@@ -167,9 +167,9 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
               <button
                 onClick={handleRunNow}
                 disabled={agentRunning}
-                className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white shadow-xl transition-all ${
+                className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-slate-900 dark:text-white shadow-xl transition-all ${
                   agentRunning
-                    ? 'bg-slate-800 text-slate-400 cursor-not-allowed border border-slate-700'
+                    ? 'bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed border border-slate-300 dark:border-slate-700'
                     : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/25 active:scale-95'
                 }`}
               >
@@ -190,13 +190,13 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
 
           {scheduleError && <p role="alert" className="text-rose-400">{scheduleError}</p>}
           {/* Schedule Configuration Card */}
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 backdrop-blur-md shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-purple-400" />
-                <h4 className="text-sm font-bold text-white">Automated Recurring Schedule</h4>
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white">Automated Recurring Schedule</h4>
               </div>
-              <p className="text-xs text-slate-400 max-w-md">
+              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md">
                 Enable background cron runs to discover and audit new businesses automatically without manual intervention.
               </p>
             </div>
@@ -206,7 +206,7 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
                 value={scheduleFrequency}
                 onChange={(e) => saveSchedule(scheduleEnabled, e.target.value as "daily" | "weekly")}
                 disabled={!scheduleEnabled}
-                className={`bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none ${
+                className={`bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none ${
                   !scheduleEnabled ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
@@ -234,14 +234,14 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
         {/* Right 1 Col: Live Activity Terminal / Console */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <h4 className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
               <Terminal className="w-4 h-4 text-cyan-400" />
               Live Agent Console
             </h4>
             <span className="text-[10px] text-slate-500 font-mono">STDOUT / JSON</span>
           </div>
 
-          <div className="h-[420px] rounded-2xl bg-slate-950 border border-slate-800/90 p-4 font-mono text-xs overflow-y-auto space-y-2.5 shadow-inner">
+          <div className="h-[420px] rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/90 p-4 font-mono text-xs overflow-y-auto space-y-2.5 shadow-inner">
             <div className="text-[11px] text-slate-500 pb-2 border-b border-slate-900 flex items-center gap-1.5">
               <Info className="w-3.5 h-3.5 text-blue-400" />
               <span>Real-time agent execution stream</span>
@@ -253,7 +253,7 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
               </div>
             ) : (
               logs.map((log, i) => {
-                let badgeColor = 'text-slate-400';
+                let badgeColor = 'text-slate-500 dark:text-slate-400';
                 if (log.level === 'info') badgeColor = 'text-blue-400';
                 if (log.level === 'success') badgeColor = 'text-emerald-400';
                 if (log.level === 'warn') badgeColor = 'text-amber-400';
@@ -263,7 +263,7 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
                   <div key={i} className="leading-relaxed flex items-start gap-2">
                     <span className="text-slate-600 select-none">[{log.time}]</span>
                     <span className={`uppercase text-[10px] font-bold ${badgeColor}`}>[{log.level}]</span>
-                    <span className="text-slate-300 break-words flex-1">{log.message}</span>
+                    <span className="text-slate-600 dark:text-slate-300 break-words flex-1">{log.message}</span>
                   </div>
                 );
               })

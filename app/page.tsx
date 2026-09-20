@@ -271,7 +271,7 @@ export default function DashboardPage() {
   const headerInfo = getTabHeader();
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 selection:bg-blue-600 selection:text-white">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-blue-600 selection:text-slate-900 dark:text-white">
       {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
@@ -295,7 +295,7 @@ export default function DashboardPage() {
 
         <main className="p-4 md:p-8 max-w-7xl w-full mx-auto flex-1">
           {error && <div role="alert" className="mb-5 rounded-xl border border-rose-800 bg-rose-950 p-4 text-sm">{error}<button onClick={() => setError('')} className="ml-4 underline">Dismiss</button></div>}
-          <form action="/api/auth/logout" method="post" className="mb-4 text-right"><button className="text-xs text-slate-400 hover:text-white">Sign out</button></form>
+          <form action="/api/auth/logout" method="post" className="mb-4 text-right"><button className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white">Sign out</button></form>
           {activeTab === 'overview' && (
             <OverviewSection
               stats={stats}
