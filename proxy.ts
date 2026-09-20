@@ -7,7 +7,7 @@ const getJwtSecret = () => {
   return new TextEncoder().encode(secret || 'build_time_secret_do_not_use');
 };
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const authHeader = request.headers.get('authorization') || '';
 
