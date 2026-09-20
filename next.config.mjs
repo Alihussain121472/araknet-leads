@@ -1,10 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  typescript: {
-    // Skip type checking on Vercel build for ultra-fast deployments
-    ignoreBuildErrors: true,
-  },
+
   images: {
     remotePatterns: [
       {

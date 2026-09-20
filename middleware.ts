@@ -1,18 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || process.env.DASHBOARD_PASSWORD || 'default_jwt_secret_araknet_2026');
+if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is required');
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
-export default async function proxy(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const authHeader = request.headers.get('authorization') || '';
 
   // 1. Allow cron
+  const cronSecret = process.env.CRON_SECRET;
   const isCron =
     path === '/api/agent/run' &&
     request.method === 'GET' &&
     request.nextUrl.searchParams.get('schedule') === 'true' &&
-    authHeader === (process.env.CRON_SECRET ? `Bearer ${process.env.CRON_SECRET}` : '');
+    cronSecret != null &&
+    authHeader === `Bearer ${cronSecret}`;
   if (isCron) return NextResponse.next();
 
   // 2. Extract and verify JWT

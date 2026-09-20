@@ -2,7 +2,8 @@ import { SignJWT, jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || process.env.DASHBOARD_PASSWORD || 'default_jwt_secret_araknet_2026');
+if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is required');
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export interface JWTPayload {
   sub: string;
