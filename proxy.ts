@@ -1,75 +1,67 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SESSION_COOKIE, validSession, validBasic, equalSecret } from './lib/session';
+import { jwtVerify } from 'jose';
 
-export default function proxy(request: NextRequest) {
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || process.env.DASHBOARD_PASSWORD || 'default_jwt_secret_araknet_2026');
+
+export default async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const envPassword = (process.env.DASHBOARD_PASSWORD || '').trim();
-  const fallbackPassword = 'araknet2026';
-  const auth = request.headers.get('authorization') || '';
+  const authHeader = request.headers.get('authorization') || '';
 
   // 1. Allow cron
   const isCron =
     path === '/api/agent/run' &&
     request.method === 'GET' &&
     request.nextUrl.searchParams.get('schedule') === 'true' &&
-    equalSecret(auth, process.env.CRON_SECRET ? `Bearer ${process.env.CRON_SECRET}` : '');
+    authHeader === (process.env.CRON_SECRET ? `Bearer ${process.env.CRON_SECRET}` : '');
   if (isCron) return NextResponse.next();
 
-  // 2. Check session against BOTH fallback and environment passwords
-  const cookieVal = request.cookies.get(SESSION_COOKIE)?.value;
-  const authenticated =
-    validSession(cookieVal, fallbackPassword) ||
-    (Boolean(envPassword) && validSession(cookieVal, envPassword)) ||
-    Boolean(cookieVal && cookieVal.includes('.')) ||
-    validBasic(auth, fallbackPassword) ||
-    (Boolean(envPassword) && validBasic(auth, envPassword));
+  // 2. Extract and verify JWT
+  const cookieVal = request.cookies.get('araknet_session')?.value;
+  let payload = null;
+  if (cookieVal) {
+    try {
+      const result = await jwtVerify(cookieVal, JWT_SECRET);
+      payload = result.payload;
+    } catch (e) {
+      // Invalid token
+    }
+  }
 
-  // 3. Allow auth endpoints, proposals pages, and proposal APIs without blocking
+  const authenticated = !!payload;
+
+  // 3. Public Routes
   if (
     path === '/api/auth/login' ||
+    path === '/api/auth/signup' ||
     path === '/api/auth/logout' ||
     path.startsWith('/api/proposals') ||
     path === '/proposals'
   ) {
-    const requestHeaders = new Headers(request.headers);
-    if (authenticated) {
-      requestHeaders.set('x-araknet-authenticated', 'true');
-    }
-    return NextResponse.next({
-      request: { headers: requestHeaders },
-    });
+    return NextResponse.next();
   }
 
-  if (path === '/login') {
+  // 4. Redirect logged-in users away from auth pages
+  if (path === '/login' || path === '/signup') {
     return authenticated ? NextResponse.redirect(new URL('/', request.url)) : NextResponse.next();
   }
 
-  // 4. Origin validation for state-modifying requests
-  if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
-    const origin = request.headers.get('origin');
-    const host = request.headers.get('host');
-    let validOrigin = true;
-    try {
-      if (origin && host) {
-        const originHost = new URL(origin).host;
-        validOrigin =
-          originHost === host ||
-          originHost.replace(/^www\./, '') === host.replace(/^www\./, '');
-      }
-    } catch {
-      validOrigin = false;
-    }
-    if (!validOrigin) return NextResponse.json({ error: 'Invalid origin' }, { status: 403 });
-  }
-
-  // 5. Require authentication for protected dashboard routes
+  // 5. Protected Routes
   if (!authenticated) {
-    if (path.startsWith('/api/')) return NextResponse.json({ error: 'Please sign in again.' }, { status: 401 });
+    if (path.startsWith('/api/')) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
+  // 6. RBAC (Role-Based Access Control)
+  if (path.startsWith('/admin') || path.startsWith('/api/admin')) {
+    if (payload?.role !== 'admin') {
+      if (path.startsWith('/api/')) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+  }
+
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-araknet-authenticated', 'true');
+  requestHeaders.set('x-user-id', payload?.sub as string);
+  requestHeaders.set('x-user-role', payload?.role as string);
 
   const response = NextResponse.next({
     request: {

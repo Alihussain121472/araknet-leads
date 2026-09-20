@@ -1,38 +1,47 @@
-import 'server-only';
-import { cookies, headers } from 'next/headers';
-import { equalSecret, validBasic, SESSION_COOKIE } from './session';
+import { SignJWT, jwtVerify } from 'jose';
+import bcrypt from 'bcryptjs';
+import { cookies } from 'next/headers';
 
-export async function requireAccess() {
-  const reqHeaders = await headers();
-  const reqCookies = await cookies();
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || process.env.DASHBOARD_PASSWORD || 'default_jwt_secret_araknet_2026');
 
-  // 1. If trusted header set by proxy middleware, grant access immediately
-  if (reqHeaders.get('x-araknet-authenticated') === 'true') {
-    return;
+export interface JWTPayload {
+  sub: string;
+  email: string;
+  role: 'admin' | 'user';
+  exp?: number;
+  iat?: number;
+}
+
+export async function signToken(payload: Omit<JWTPayload, 'exp' | 'iat'>) {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('7d')
+    .sign(JWT_SECRET);
+}
+
+export async function verifyToken(token: string): Promise<JWTPayload | null> {
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return payload as unknown as JWTPayload;
+  } catch (err) {
+    return null;
   }
+}
 
-  // 2. If active session cookie is present from owner login, grant access
-  const session = reqCookies.get(SESSION_COOKIE)?.value;
-  if (session && session.includes('.')) {
-    return;
-  }
+export async function hashPassword(password: string): Promise<string> {
+  return await bcrypt.hash(password, 10);
+}
 
-  // 3. Cron authentication
-  const auth = reqHeaders.get('authorization') || '';
-  const cron = process.env.CRON_SECRET ? `Bearer ${process.env.CRON_SECRET}` : '';
-  if (cron && equalSecret(auth, cron)) {
-    return;
-  }
+export async function comparePassword(password: string, hash: string): Promise<boolean> {
+  return await bcrypt.compare(password, hash);
+}
 
-  // 4. Basic Auth
-  const envPassword = (process.env.DASHBOARD_PASSWORD || '').trim();
-  const fallbackPassword = 'araknet2026';
-  if (
-    validBasic(auth, fallbackPassword) ||
-    (Boolean(envPassword) && validBasic(auth, envPassword))
-  ) {
-    return;
-  }
-
-  throw new Error('Authentication required');
+export async function requireAccess(): Promise<JWTPayload> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('araknet_session')?.value;
+  if (!token) throw new Error('Unauthorized');
+  const payload = await verifyToken(token);
+  if (!payload) throw new Error('Unauthorized');
+  return payload;
 }

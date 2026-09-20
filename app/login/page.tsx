@@ -1,11 +1,11 @@
+import Link from 'next/link';
+
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;
 
   let errorMessage = '';
   if (error === 'credentials') {
-    errorMessage = 'Incorrect password. Make sure username is "owner" and check for caps or typos.';
-  } else if (error === 'not_configured') {
-    errorMessage = 'DASHBOARD_PASSWORD is not set in Vercel Production Environment Variables.';
+    errorMessage = 'Incorrect email or password.';
   } else if (error) {
     errorMessage = 'Authentication error. Please try again.';
   }
@@ -16,7 +16,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <div>
           <p className="text-sm font-semibold text-cyan-400 tracking-wider">ARAKNET</p>
           <h1 className="mt-2 text-2xl font-bold">Welcome back</h1>
-          <p className="mt-2 text-sm text-slate-400">Sign in to your business discovery dashboard.</p>
+          <p className="mt-2 text-sm text-slate-400">Sign in to your lead discovery dashboard.</p>
         </div>
 
         {errorMessage && (
@@ -26,12 +26,13 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         )}
 
         <label className="block text-sm">
-          Username
+          Email
           <input
-            name="username"
-            autoComplete="username"
-            defaultValue="owner"
+            name="email"
+            type="email"
+            autoComplete="email"
             required
+            placeholder="you@example.com"
             className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 p-3 text-slate-100 focus:outline-none focus:border-blue-500"
           />
         </label>
@@ -43,8 +44,6 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             type="password"
             autoComplete="current-password"
             required
-            maxLength={1024}
-            placeholder="Enter DASHBOARD_PASSWORD"
             className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 p-3 text-slate-100 focus:outline-none focus:border-blue-500"
           />
         </label>
@@ -53,9 +52,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           Sign in
         </button>
 
-        <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-500 space-y-1">
-          <p>• Username: <span className="text-slate-300 font-mono">owner</span> (or your email)</p>
-          <p>• Password: configured via <span className="text-slate-300 font-mono">DASHBOARD_PASSWORD</span> in Vercel.</p>
+        <div className="pt-4 border-t border-slate-800 text-sm text-center text-slate-400">
+          Don't have an account? <Link href="/signup" className="text-blue-400 hover:underline">Sign up</Link>
         </div>
       </form>
     </main>

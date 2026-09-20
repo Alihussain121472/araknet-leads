@@ -1,7 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { SESSION_COOKIE } from '@/lib/session';
-export async function POST(request: NextRequest) {
-  const response = NextResponse.redirect(new URL('/login', request.url), 303);
-  response.cookies.set(SESSION_COOKIE, '', { httpOnly: true, secure: request.nextUrl.protocol === 'https:', sameSite: 'lax', path: '/', maxAge: 0 });
+import { NextResponse } from 'next/server';
+
+export async function POST(request: Request) {
+  const response = NextResponse.json({ success: true, redirect: '/login' });
+  response.cookies.set('araknet_session', '', {
+    httpOnly: true,
+    secure: new URL(request.url).protocol === 'https:',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 0,
+  });
   return response;
 }

@@ -18,6 +18,17 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, agentRunning }) => {
+  const [role, setRole] = React.useState<string>('user');
+
+  React.useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) setRole(data.user.role);
+      })
+      .catch(() => {});
+  }, []);
+
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, badge: null },
     { 
@@ -89,17 +100,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, agent
       </div>
 
       {/* Footer Profile & Status */}
-      <div className="p-4 border-t border-slate-800/80">
+      <div className="p-4 border-t border-slate-800/80 space-y-3">
+        {role === 'admin' && (
+          <a
+            href="/admin"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-bold hover:bg-amber-500/20 transition-colors"
+          >
+            <ShieldCheck className="w-4 h-4" />
+            Admin Dashboard
+          </a>
+        )}
         <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
-              DEV
+              {role === 'admin' ? 'ADM' : 'USR'}
             </div>
             <div className="overflow-hidden">
               <p className="text-xs font-semibold text-slate-200 truncate">Araknet Workspace</p>
               <p className="text-[11px] text-emerald-400 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                Owner Dashboard
+                {role === 'admin' ? 'Owner Dashboard' : 'User Dashboard'}
               </p>
             </div>
           </div>

@@ -3,6 +3,14 @@ export type LeadStatus = 'new' | 'contacted' | 'proposal_sent' | 'won' | 'lost';
 export type RunStatus = 'idle' | 'running' | 'completed' | 'failed';
 export type TriggerType = 'manual' | 'schedule' | 'n8n_webhook';
 
+export interface User {
+  id: string;
+  email: string;
+  password_hash: string;
+  role: 'admin' | 'user';
+  created_at: string;
+}
+
 export interface SocialLinks {
   facebook?: string;
   instagram?: string;
@@ -13,6 +21,7 @@ export interface SocialLinks {
 
 export interface Lead {
   id: string;
+  user_id?: string;
   created_at: string;
   updated_at: string;
   business_name: string;
@@ -50,6 +59,7 @@ export interface AgentLog {
 
 export interface AgentRun {
   id: string;
+  user_id?: string;
   created_at: string;
   updated_at: string;
   country: string;
@@ -67,6 +77,7 @@ export interface AgentRun {
 export interface LeadNote {
   id: string;
   lead_id: string;
+  user_id?: string;
   created_at: string;
   author: string;
   content: string;
@@ -75,6 +86,7 @@ export interface LeadNote {
 export interface LeadActivity {
   id: string;
   lead_id: string;
+  user_id?: string;
   created_at: string;
   activity_type: string;
   description: string;
