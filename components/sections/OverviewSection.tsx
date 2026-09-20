@@ -75,29 +75,29 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
   return (
     <div className="space-y-8">
       {/* Top Banner & Quick Action */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-900/40 via-indigo-950/40 to-slate-900 border border-blue-500/20 p-8 shadow-xl">
-        <div className="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 border border-blue-500/20 p-8 shadow-xl">
+        <div className="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-blue-500/20 blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-semibold text-blue-400 mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-xs font-semibold text-blue-300 mb-3">
               <Sparkles className="w-3.5 h-3.5" />
               Autonomous Lead Discovery Engine
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-2xl font-bold text-white tracking-tight">
               Ready to discover businesses that need websites & AI automation?
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+            <p className="text-sm text-blue-100/80 mt-2 leading-relaxed">
               Your agent searches business directories for website listings and estimates automation opportunities by industry. Verify each opportunity before outreach.
             </p>
           </div>
           <div className="flex-shrink-0">
             <button
               onClick={onLaunchAgent}
-              className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-900 dark:text-white font-semibold text-sm shadow-lg shadow-blue-500/25 transition-all hover:scale-105 active:scale-95"
+              className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-400 hover:to-indigo-400 text-white font-bold text-sm shadow-lg shadow-blue-500/40 transition-all hover:scale-105 active:scale-95 border border-blue-400/50"
             >
-              <Sparkles className="w-4 h-4 text-cyan-300" />
+              <Sparkles className="w-4 h-4 text-cyan-200" />
               <span>Launch Discovery Agent</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-900 dark:text-white/80" />
+              <ArrowUpRight className="w-4 h-4 text-white" />
             </button>
           </div>
         </div>
