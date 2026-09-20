@@ -34,6 +34,8 @@ export default function DashboardPage() {
 
   const [error, setError] = useState('');
 
+  const [newlyFetchedLeads, setNewlyFetchedLeads] = useState<Lead[]>([]);
+
   // Fetch leads
   const fetchLeads = useCallback(async () => {
     setIsLoadingLeads(true);
@@ -72,7 +74,7 @@ export default function DashboardPage() {
         const data = await res.json();
         if (data.latestRun) {
           setLatestRun(data.latestRun);
-          setLogs(data.latestRun.logs || []);
+          if (!agentRunning) setLogs(data.latestRun.logs || []);
         }
       }
     } catch (err) {
@@ -103,6 +105,7 @@ export default function DashboardPage() {
     if (agentRunning) return;
     setError('');
     setAgentRunning(true);
+    setNewlyFetchedLeads([]);
     setLogs([
       {
         time: new Date().toLocaleTimeString(),
@@ -122,6 +125,7 @@ export default function DashboardPage() {
       if (res.ok) {
         const data = await res.json();
         if (data.logs) setLogs(data.logs);
+        if (data.leads && data.leads.length > 0) setNewlyFetchedLeads(data.leads);
         if (!data.success) throw new Error(data.error || 'Discovery did not complete');
         // Refresh leads & stats
         await fetchLeads();
@@ -129,7 +133,7 @@ export default function DashboardPage() {
         await fetchAgentStatus();
       }
     } catch (err) {
-      setLogs([{time:new Date().toLocaleTimeString(),level:'error',message:err instanceof Error ? err.message : 'Search failed'}]);
+      setLogs(prev => [...prev, {time:new Date().toLocaleTimeString(),level:'error',message:err instanceof Error ? err.message : 'Search failed'}]);
     } finally {
       setAgentRunning(false);
     }
@@ -313,6 +317,7 @@ export default function DashboardPage() {
               onTriggerRun={handleTriggerRun}
               latestRun={latestRun}
               logs={logs}
+              newlyFetchedLeads={newlyFetchedLeads}
             />
           )}
 

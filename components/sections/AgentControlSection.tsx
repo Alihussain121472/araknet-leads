@@ -23,6 +23,7 @@ interface AgentControlSectionProps {
   onTriggerRun: (params: { country: string; city: string; industry: string; maxResults: number }) => Promise<void>;
   latestRun: AgentRun | null;
   logs: AgentLog[];
+  newlyFetchedLeads?: Lead[];
 }
 
 export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
@@ -30,6 +31,7 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
   onTriggerRun,
   latestRun,
   logs,
+  newlyFetchedLeads = [],
 }) => {
   const [selectedCountry, setSelectedCountry] = useState<string>('Pakistan');
   const [selectedCity, setSelectedCity] = useState<string>('Karachi');
@@ -241,7 +243,7 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
             <span className="text-[10px] text-slate-500 font-mono">STDOUT / JSON</span>
           </div>
 
-          <div className="h-[420px] rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/90 p-4 font-mono text-xs overflow-y-auto space-y-2.5 shadow-inner">
+          <div className="h-[420px] rounded-2xl bg-slate-950 border border-slate-800 p-4 font-mono text-xs overflow-y-auto space-y-2.5 shadow-inner">
             <div className="text-[11px] text-slate-500 pb-2 border-b border-slate-900 flex items-center gap-1.5">
               <Info className="w-3.5 h-3.5 text-blue-400" />
               <span>Real-time agent execution stream</span>
@@ -263,7 +265,7 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
                   <div key={i} className="leading-relaxed flex items-start gap-2">
                     <span className="text-slate-600 select-none">[{log.time}]</span>
                     <span className={`uppercase text-[10px] font-bold ${badgeColor}`}>[{log.level}]</span>
-                    <span className="text-slate-600 dark:text-slate-300 break-words flex-1">{log.message}</span>
+                    <span className="text-slate-400 break-words flex-1">{log.message}</span>
                   </div>
                 );
               })
@@ -278,6 +280,57 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Newly Fetched Leads Table */}
+      {newlyFetchedLeads && newlyFetchedLeads.length > 0 && (
+        <div className="mt-8 space-y-4 animate-in slide-in-from-bottom-4 duration-500">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-amber-400" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Fresh Opportunities Discovered</h3>
+          </div>
+          <div className="bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Business / Owner</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Industry</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Contact</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Service Pitch</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {newlyFetchedLeads.map((lead) => (
+                    <tr key={lead.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="font-semibold text-sm text-slate-900 dark:text-white">{lead.business_name}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Owner: {lead.owner_name || 'N/A'}</div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300">
+                        {lead.industry}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300 space-y-1">
+                        <div>{lead.email || 'No email found'}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">{lead.phone || 'No phone'}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-bold border border-amber-500/20">
+                            {lead.opportunity_score}/100
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2 italic">
+                          {lead.opportunity_reason}
+                        </p>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
