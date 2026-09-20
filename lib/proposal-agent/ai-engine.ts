@@ -1,7 +1,9 @@
-import { ProposalInput, ProposalResponse } from './types';
+import { ProposalInput, ProposalResponse, AcademicProposalInput, AcademicProposalResponse } from './types';
 import { generateOfflineProposal } from './offline-engine';
+import { generateAcademicProposalOffline } from './academic-engine';
 import { analyzeRedFlags } from './red-flag-detector';
 import { lintProposal, countWords } from './rules-linter';
+
 
 const SYSTEM_PROMPT = `# ROLE
 You are a senior freelance proposal strategist who has helped freelancers win over $2M in contracts across Upwork, direct outreach, and agency pitches.
@@ -300,3 +302,162 @@ export async function generateProposalWithAi(
   // Fallback to offline strategic engine
   return generateOfflineProposal(inp);
 }
+
+const ACADEMIC_SYSTEM_PROMPT = `# ROLE
+You are an expert academic and professional proposal writing assistant designed for students at all levels — Bachelor's, Master's, and PhD.
+
+Your goal is to help the user write a high-quality, structured proposal tailored to their academic level and chosen niche.
+
+---
+
+# STEP 1 — ACADEMIC LEVEL CALIBRATION
+- Bachelor's: Clear, simple, foundational language. Practical understanding, structured milestones, foundational literature, direct outcomes.
+- Master's: Analytical, structured, research-aware language. Theoretical frameworks, comparative analysis, empirical backing, gap identification, operational execution.
+- PhD: Advanced, scholarly, gap-focused, methodology-rich language. Epistemological and ontological grounding, significant novel contribution to literature/field, rigorous empirical design, triangulation, and validation protocols.
+
+---
+
+# STEP 2 — PROPOSAL TYPE
+- Education Proposal: Pedagogical frameworks, instructional design, curriculum development, student learning outcomes, assessment rubrics, educational equity/access.
+- Business Proposal: Market analysis, competitive positioning, value proposition, operational feasibility, financial/ROI projections, resource allocation, risk mitigation.
+- Social Media Proposal: Audience segmentation, multi-channel content strategy, algorithmic distribution mechanisms, community engagement, brand voice, performance KPIs.
+
+---
+
+# STEP 4 — PROPOSAL STRUCTURE (7 MANDATORY SECTIONS)
+Return your proposal in clean Markdown with these exact sections:
+# [Title]
+## 1. Title
+## 2. Introduction / Background
+## 3. Problem Statement
+## 4. Objectives (as bullet points)
+## 5. Methodology or Approach
+## 6. Expected Outcomes / Benefits
+## 7. Conclusion
+`;
+
+export async function generateAcademicProposalWithAi(
+  inp: AcademicProposalInput,
+  options?: { provider?: string; apiKey?: string; model?: string }
+): Promise<AcademicProposalResponse> {
+  const provider = options?.provider || 'offline';
+  const apiKey = options?.apiKey || (
+    provider === 'gemini' ? (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) :
+    provider === 'groq' ? process.env.GROQ_API_KEY :
+    provider === 'openai' ? process.env.OPENAI_API_KEY : undefined
+  );
+
+  const fallback = generateAcademicProposalOffline(inp);
+  if (!apiKey || provider === 'offline') {
+    return fallback;
+  }
+
+  const userPrompt = `# INPUT
+ACADEMIC_LEVEL: ${inp.academic_level}
+PROPOSAL_TYPE: ${inp.proposal_type}
+TOPIC: ${inp.topic}
+PURPOSE: ${inp.purpose}
+TARGET_AUDIENCE: ${inp.target_audience || 'Evaluation Committee'}
+SPECIFIC_REQUIREMENTS: ${inp.specific_requirements || 'Standard guidelines'}
+`;
+
+  try {
+    let rawText = '';
+    if (provider === 'gemini') {
+      const model = options?.model || 'gemini-2.5-flash';
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: ACADEMIC_SYSTEM_PROMPT }] },
+          contents: [{ parts: [{ text: userPrompt }] }],
+          generationConfig: { temperature: 0.7 },
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      }
+    } else if (provider === 'groq') {
+      const model = options?.model || 'llama-3.3-70b-versatile';
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: ACADEMIC_SYSTEM_PROMPT },
+            { role: 'user', content: userPrompt },
+          ],
+          temperature: 0.7,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        rawText = data.choices?.[0]?.message?.content || '';
+      }
+    } else if (provider === 'openai') {
+      const model = options?.model || 'gpt-4o-mini';
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: ACADEMIC_SYSTEM_PROMPT },
+            { role: 'user', content: userPrompt },
+          ],
+          temperature: 0.7,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        rawText = data.choices?.[0]?.message?.content || '';
+      }
+    }
+
+    if (rawText && rawText.length > 100) {
+      // Parse sections
+      const introMatch = rawText.match(/##\s*2\.\s*Introduction[^\n]*\n+([\s\S]*?)(?=\n##|\Z)/i);
+      const probMatch = rawText.match(/##\s*3\.\s*Problem Statement[^\n]*\n+([\s\S]*?)(?=\n##|\Z)/i);
+      const objsMatch = rawText.match(/##\s*4\.\s*Objectives[^\n]*\n+([\s\S]*?)(?=\n##|\Z)/i);
+      const methodMatch = rawText.match(/##\s*5\.\s*Methodology[^\n]*\n+([\s\S]*?)(?=\n##|\Z)/i);
+      const outcomesMatch = rawText.match(/##\s*6\.\s*Expected Outcomes[^\n]*\n+([\s\S]*?)(?=\n##|\Z)/i);
+      const conclusionMatch = rawText.match(/##\s*7\.\s*Conclusion[^\n]*\n+([\s\S]*?)(?=\n##|---\s*\n|\Z)/i);
+
+      let parsedObjs = fallback.objectives;
+      if (objsMatch && objsMatch[1].trim()) {
+        const lines = objsMatch[1].split('\n').map(l => l.replace(/^[-*•\d.]\s*/, '').trim()).filter(l => l.length > 5);
+        if (lines.length > 0) parsedObjs = lines;
+      }
+
+      return {
+        title: fallback.title,
+        academic_level: inp.academic_level,
+        proposal_type: inp.proposal_type,
+        introduction_background: introMatch?.[1]?.trim() || fallback.introduction_background,
+        problem_statement: probMatch?.[1]?.trim() || fallback.problem_statement,
+        objectives: parsedObjs,
+        methodology_approach: methodMatch?.[1]?.trim() || fallback.methodology_approach,
+        expected_outcomes_benefits: outcomesMatch?.[1]?.trim() || fallback.expected_outcomes_benefits,
+        conclusion: conclusionMatch?.[1]?.trim() || fallback.conclusion,
+        raw_markdown: rawText,
+        word_count: countWords(rawText),
+        provider_used: provider,
+        level_insights: fallback.level_insights
+      };
+    }
+  } catch (err) {
+    console.error('[Academic AI Engine error]:', err);
+  }
+
+  return fallback;
+}
+

@@ -43,3 +43,34 @@ export interface ProposalResponse {
   provider_used: string;
   validation_status: 'PASS' | 'WARNINGS_REVIEWED';
 }
+
+// ==================== Academic & Professional Proposal Types ====================
+
+export type AcademicLevel = "Bachelor's" | "Master's" | "PhD";
+export type AcademicProposalType = 'Education Proposal' | 'Business Proposal' | 'Social Media Proposal';
+
+export interface AcademicProposalInput {
+  academic_level: AcademicLevel;
+  proposal_type: AcademicProposalType;
+  topic: string;
+  purpose: string;
+  target_audience?: string;
+  specific_requirements?: string;
+}
+
+export interface AcademicProposalResponse {
+  title: string;
+  academic_level: AcademicLevel;
+  proposal_type: AcademicProposalType;
+  introduction_background: string;
+  problem_statement: string;
+  objectives: string[];
+  methodology_approach: string;
+  expected_outcomes_benefits: string;
+  conclusion: string;
+  raw_markdown: string;
+  word_count: number;
+  provider_used: string;
+  level_insights: string;
+}
+

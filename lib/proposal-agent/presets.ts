@@ -100,3 +100,46 @@ export const PRESETS: Record<string, PresetScenario> = {
     },
   },
 };
+
+export const academicPresets: Record<string, { id: string; title: string; description: string; input: import('./types').AcademicProposalInput }> = {
+  '1': {
+    id: '1',
+    title: "Bachelor's — Education Proposal",
+    description: 'Applied study on gamified mobile microlearning in high school STEM classrooms.',
+    input: {
+      academic_level: "Bachelor's",
+      proposal_type: 'Education Proposal',
+      topic: 'Gamified Mobile Microlearning in High School Physics Education',
+      purpose: 'Evaluate whether bite-sized interactive mobile problem sets increase student conceptual recall and homework completion rates compared to standard textbook problem sheets.',
+      target_audience: 'Secondary Education Department Curriculum Committee',
+      specific_requirements: 'APA 7th edition formatting, 4-month classroom pilot scope, and accessible for students with diverse smartphone access.'
+    }
+  },
+  '2': {
+    id: '2',
+    title: "Master's — Business Proposal",
+    description: 'Strategic operational framework for an SME cross-border supply chain FinTech platform.',
+    input: {
+      academic_level: "Master's",
+      proposal_type: 'Business Proposal',
+      topic: 'Cross-Border B2B Supply Chain FinTech Platform for SME Importers',
+      purpose: 'Formulate an empirical operational and economic feasibility plan for automated invoice discounting, mitigating currency volatility and working capital friction for mid-market suppliers.',
+      target_audience: 'Corporate Venture Capital Investment Board & Credit Risk Committee',
+      specific_requirements: 'Detailed risk matrix, quantitative DCF financial modeling, Basel III regulatory compliance, and 18-month pilot milestones.'
+    }
+  },
+  '3': {
+    id: '3',
+    title: 'PhD — Social Media Proposal',
+    description: 'Doctoral research into algorithmic mediations and epistemic polarization in short-form video networks.',
+    input: {
+      academic_level: 'PhD',
+      proposal_type: 'Social Media Proposal',
+      topic: 'Algorithmic Mediations and Affective Contagion in Short-Form Video Networks',
+      purpose: 'Investigate the causal pathways through which collaborative-filtering recommendation algorithms govern epistemic polarization, affective contagion, and user cognitive retention across high-velocity social video platforms.',
+      target_audience: 'Doctoral Dissertation Review Board & Social Computing Ethics Advisory Panel',
+      specific_requirements: 'Longitudinal mixed-methods empirical design (NLP + structural equation modeling), computational graph analysis across 1M+ platform nodes, and IRB human subjects ethics protocols.'
+    }
+  }
+};
+
