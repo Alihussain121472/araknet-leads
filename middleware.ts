@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is required');
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) console.warn('WARNING: JWT_SECRET is missing.');
+  return new TextEncoder().encode(secret || 'build_time_secret_do_not_use');
+};
 
 export default async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
@@ -23,7 +26,7 @@ export default async function middleware(request: NextRequest) {
   let payload = null;
   if (cookieVal) {
     try {
-      const result = await jwtVerify(cookieVal, JWT_SECRET);
+      const result = await jwtVerify(cookieVal, getJwtSecret());
       payload = result.payload;
     } catch (e) {
       // Invalid token

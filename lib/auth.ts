@@ -2,8 +2,15 @@ import { SignJWT, jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 
-if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is required');
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
+// We fall back to an empty string during build time so Next.js doesn't crash during route collection.
+// We will explicitly check for it inside the actual auth functions at runtime.
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret && process.env.NODE_ENV === 'production') {
+    console.warn('WARNING: JWT_SECRET is missing. Authentication will fail.');
+  }
+  return new TextEncoder().encode(secret || 'build_time_secret_do_not_use');
+};
 
 export interface JWTPayload {
   sub: string;
@@ -14,16 +21,18 @@ export interface JWTPayload {
 }
 
 export async function signToken(payload: Omit<JWTPayload, 'exp' | 'iat'>) {
+  if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET environment variable is missing.');
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
 }
 
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET environment variable is missing.');
+    const { payload } = await jwtVerify(token, getJwtSecret());
     return payload as unknown as JWTPayload;
   } catch (err) {
     return null;
