@@ -75,13 +75,39 @@ async function discover(params: {
     // 2. Audit and Score Each Candidate
     const enrichedLeads: Lead[] = [];
 
+    const KNOWN_CHAINS = ['mcdonald', 'starbucks', 'kfc', 'subway', 'burger king', 'pizza hut', 'domino', 'walmart', 'target', 'walgreens', 'cvs', 'dunkin', 'taco bell', 'wendy', 'kroger', 'safeway', '7-eleven', 'marriott', 'hilton'];
+
     for (const biz of rawBusinesses) {
+      // Hard Filtering Rules
+      const hasWebsite = !!biz.website && biz.website.trim().length > 0;
+      const isFacebookShop = hasWebsite && biz.website!.toLowerCase().includes('facebook.com');
+
+      // 1. No website on their Google Maps profile (skip if it has one, skip if it's a FB shop)
+      if (hasWebsite || isFacebookShop) continue;
+
+      // 2. Has a verified physical address
+      if (!biz.address || biz.address.trim().length === 0) continue;
+
+      // 3. Has at least 15+ reviews
+      if ((biz.user_ratings_total || 0) < 15) continue;
+
+      // 4. Currently operational
+      if (providerUsed === 'google_places' && biz.business_status && biz.business_status !== 'OPERATIONAL') continue;
+
+      // 5. Rating between 3.5 – 4.9
+      if ((biz.rating || 0) < 3.5 || (biz.rating || 0) > 4.9) continue;
+
+      // 6. Independent/local owned — NO chains or franchises
+      const isChain = KNOWN_CHAINS.some(chain => biz.name.toLowerCase().includes(chain));
+      if (isChain) continue;
+
       const audit = auditAndScore({
         business_name: biz.name,
         industry: biz.industry || industry,
         website_url: biz.website,
         google_rating: biz.rating,
         google_reviews_count: biz.user_ratings_total,
+        phone: biz.phone,
       });
 
       const tags: string[] = [];
@@ -109,6 +135,8 @@ async function discover(params: {
         social_links: {},
         ai_automation_potential: audit.ai_automation_potential,
         opportunity_score: audit.opportunity_score,
+        pitch_score: audit.pitch_score,
+        best_service_to_pitch: audit.best_service_to_pitch,
         opportunity_reason: audit.opportunity_reason,
         suggested_services: audit.suggested_services,
         lead_status: 'new',
@@ -120,16 +148,17 @@ async function discover(params: {
       enrichedLeads.push(leadRecord);
     }
 
-    const qualifiedCount = enrichedLeads.filter(l => l.opportunity_score >= 70).length;
+    const qualifiedCount = enrichedLeads.filter(l => l.pitch_score >= 5).length;
 
     logs.push({
       time: new Date().toLocaleTimeString(),
       level: 'success',
-      message: `Audit completed: ${enrichedLeads.length} leads audited (${qualifiedCount} high-opportunity prospects).`,
+      message: `Audit completed: ${enrichedLeads.length} leads passed filtering (${qualifiedCount} high-pitch prospects).`,
     });
 
     // 3. Persist leads
-    const ranked = enrichedLeads.sort((a,b) => leadIntelligence(b).priority - leadIntelligence(a).priority);
+    // Sort by pitch_score highest first
+    const ranked = enrichedLeads.sort((a,b) => b.pitch_score - a.pitch_score);
     const inserted = await addLeads(ranked, maxResults);
     logs.push({ time: new Date().toLocaleTimeString(), level: 'success', message: `${inserted.length} new leads saved from ${rawBusinesses.length} candidates. Existing leads were preserved.` });
 
@@ -139,7 +168,7 @@ async function discover(params: {
       ...initialRun,
       status: 'completed',
       leads_found_count: inserted.length,
-      leads_qualified_count: inserted.filter(l => l.opportunity_score >= 70).length,
+      leads_qualified_count: inserted.filter(l => l.pitch_score >= 5).length,
       run_duration_ms: duration,
       logs,
     };

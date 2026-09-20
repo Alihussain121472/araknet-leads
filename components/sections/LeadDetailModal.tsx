@@ -166,20 +166,20 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
               </div>
             </div>
 
-            {/* Opportunity Score & Pitch Breakdown */}
+            {/* Pitch Score & Pitch Breakdown */}
             <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/10 via-slate-900 to-slate-950 border border-amber-500/30 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-xl shadow-inner">
-                    {lead.opportunity_score}
+                    {lead.pitch_score}/10
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
                       <Sparkles className="w-4 h-4 text-amber-400" />
-                      Opportunity Assessment
+                      Pitch Score
                     </h3>
                     <p className="text-xs text-slate-400">
-                      AI Automation Potential: <span className="text-cyan-400 font-semibold">{lead.ai_automation_potential}%</span>
+                      Best Service to Pitch: <span className="text-cyan-400 font-semibold">{lead.best_service_to_pitch}</span>
                     </p>
                   </div>
                 </div>

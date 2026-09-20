@@ -31,8 +31,10 @@ export interface Lead {
   social_links?: SocialLinks;
   ai_automation_potential: number; // 0-100
   opportunity_score: number; // 0-100
+  pitch_score: number; // 1-10
   opportunity_reason?: string;
   suggested_services: string[];
+  best_service_to_pitch: string;
   lead_status: LeadStatus;
   tags: string[];
   source_provider: string;

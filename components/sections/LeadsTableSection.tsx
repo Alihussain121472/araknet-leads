@@ -72,7 +72,7 @@ export const LeadsTableSection: React.FC<LeadsTableSectionProps> = ({
       if (lead.has_app !== wantApp) return false;
     }
     if (selectedLeadStatus !== 'all' && lead.lead_status !== selectedLeadStatus) return false;
-    if (lead.opportunity_score < minScore) return false;
+    if (lead.pitch_score < minScore) return false;
 
     return true;
   });
@@ -80,7 +80,7 @@ export const LeadsTableSection: React.FC<LeadsTableSectionProps> = ({
   // Sorting pipeline
   filteredLeads.sort((a, b) => {
     let diff = 0;
-    if (sortBy === 'score') diff = a.opportunity_score - b.opportunity_score;
+    if (sortBy === 'score') diff = a.pitch_score - b.pitch_score;
     else if (sortBy === 'rating') diff = (a.google_rating || 0) - (b.google_rating || 0);
     else if (sortBy === 'name') diff = a.business_name.localeCompare(b.business_name);
     else diff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
@@ -195,16 +195,6 @@ export const LeadsTableSection: React.FC<LeadsTableSectionProps> = ({
             <option value="active">Has Active Website</option>
           </select>
 
-          {/* App Filter */}
-          <select
-            value={selectedAppStatus}
-            onChange={(e) => { setSelectedAppStatus(e.target.value); setCurrentPage(1); }}
-            className="bg-slate-950/80 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
-          >
-            <option value="all">App: Any</option>
-            <option value="false">No Mobile App</option>
-            <option value="true">Has Mobile App</option>
-          </select>
 
           {/* Lead Funnel Status */}
           <select
@@ -227,9 +217,9 @@ export const LeadsTableSection: React.FC<LeadsTableSectionProps> = ({
             className="bg-slate-950/80 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
           >
             <option value={0}>Any Score</option>
-            <option value={70}>Score &gt; 70</option>
-            <option value={85}>Score &gt; 85 (Prime)</option>
-            <option value={90}>Score &gt; 90 (Urgent)</option>
+            <option value={5}>Score &gt;= 5</option>
+            <option value={7}>Score &gt;= 7 (Prime)</option>
+            <option value={9}>Score &gt;= 9 (Urgent)</option>
           </select>
         </div>
       </div>
@@ -261,13 +251,13 @@ export const LeadsTableSection: React.FC<LeadsTableSectionProps> = ({
                 <th className="p-4">Location</th>
                 <th className="p-4">Industry</th>
                 <th className="p-4">Website</th>
-                <th className="p-4">App</th>
+                <th className="p-4">Best Service to Pitch</th>
                 <th 
                   onClick={() => toggleSort('score')}
                   className="p-4 cursor-pointer hover:text-slate-200 transition-colors"
                 >
                   <div className="flex items-center gap-1.5">
-                    <span>Opportunity Score</span>
+                    <span>Pitch Score</span>
                     <ArrowUpDown className="w-3 h-3 text-amber-400" />
                   </div>
                 </th>
@@ -353,30 +343,27 @@ export const LeadsTableSection: React.FC<LeadsTableSectionProps> = ({
                         </span>
                       </td>
 
-                      {/* App */}
+                      {/* Best Service to Pitch */}
                       <td className="p-4">
-                        {lead.has_app ? (
-                          <span className="text-emerald-400 font-medium">Yes</span>
-                        ) : (
-                          <span className="text-slate-500">{lead.has_app === null ? "Unverified" : "No"}</span>
-                        )}
+                        <span className="text-[11px] text-blue-300 font-medium">
+                          {lead.best_service_to_pitch}
+                        </span>
                       </td>
 
-                      {/* Opportunity Score */}
+                      {/* Pitch Score */}
                       <td className="p-4">
                         <div className="flex items-center gap-2">
                           <div className="w-10 h-10 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center font-black text-sm text-amber-400 shadow-inner">
-                            {lead.opportunity_score}
+                            {lead.pitch_score}/10
                           </div>
                           <div className="text-[10px] text-slate-400">
-                            {lead.opportunity_score >= 85 ? (
+                            {lead.pitch_score >= 8 ? (
                               <span className="text-amber-400 font-bold block">Prime Deal</span>
-                            ) : lead.opportunity_score >= 70 ? (
+                            ) : lead.pitch_score >= 5 ? (
                               <span className="text-blue-400 font-medium block">High Upside</span>
                             ) : (
                               <span className="text-slate-400 block">Moderate</span>
                             )}
-                            <span>{lead.ai_automation_potential}% Auto</span>
                           </div>
                         </div>
                       </td>

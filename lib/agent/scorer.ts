@@ -5,6 +5,8 @@ export interface AuditResult {
   has_app: boolean | null;
   ai_automation_potential: number;
   opportunity_score: number;
+  pitch_score: number;
+  best_service_to_pitch: string;
   opportunity_reason: string;
   suggested_services: string[];
 }
@@ -77,6 +79,7 @@ export function auditAndScore(business: {
   website_url?: string | null;
   google_rating?: number;
   google_reviews_count?: number;
+  phone?: string;
 }): AuditResult {
   const industryMeta = evaluateIndustry(business.industry);
   const aiPotential = industryMeta.potential;
@@ -124,14 +127,40 @@ export function auditAndScore(business: {
   // Composite Opportunity Score
   const opportunity_score = Math.min(100, websiteScore + appScore + industryScore + reputationScore);
 
+  // --- NEW PITCH SCORE LOGIC ---
+  let pitch_score = 0;
+  if (website_status === 'no_website') pitch_score += 3;
+  if (reviews >= 50) pitch_score += 2;
+  if ((business.google_rating || 0) >= 4.0) pitch_score += 1;
+  
+  // High digital demand niches: Clinic, Dental, Restaurant, Salon, Home Services, Automotive, Legal
+  const highDemandNiches = ['Clinic & Healthcare', 'Dental Clinic', 'Restaurant', 'Salon & Wellness', 'Home Services', 'Automotive', 'Legal & Financial'];
+  const mappedIndustry = evaluateIndustry(business.industry);
+  const industryKey = Object.keys(INDUSTRY_AUTOMATION_POTENTIAL).find(k => INDUSTRY_AUTOMATION_POTENTIAL[k] === mappedIndustry) || 'Other';
+  if (highDemandNiches.includes(industryKey)) pitch_score += 2;
+  
+  if (business.phone && website_status === 'no_website') pitch_score += 2;
+
+  // Bound between 1 and 10 just in case
+  pitch_score = Math.max(1, Math.min(10, pitch_score));
+
+  // --- NEW PITCH MAPPING LOGIC ---
+  let best_service_to_pitch = 'Website Design & Development';
+  if (industryKey === 'Salon & Wellness' || industryKey === 'Clinic & Healthcare' || industryKey === 'Dental Clinic') best_service_to_pitch = 'Website + AI Booking Chatbot';
+  else if (industryKey === 'Legal & Financial') best_service_to_pitch = 'Professional Website + Lead Gen Automation';
+  else if (industryKey === 'Restaurant') best_service_to_pitch = 'E-menu Website + Social Media Automation';
+  else if (industryKey === 'Home Services' || industryKey === 'Automotive') best_service_to_pitch = 'SEO + Customer Service Chatbot';
+  else if (industryKey === 'Retail & Boutique') best_service_to_pitch = 'E-commerce Setup + Mobile App';
+  else if (industryKey === 'Fitness & Gym') best_service_to_pitch = 'Website + Membership Management System';
+
   // Generate personalized sales pitch reason
   let reason = '';
   if (website_status === 'no_website') {
-    reason = `${business.industry} listing with ${reviews > 0 ? `${reviews} customer reviews` : 'active local presence'} but no website listed by this directory (verify manually). Prime candidate for a modern web presence & booking system.`;
+    reason = `${business.industry} listing with ${reviews > 0 ? `${reviews} customer reviews` : 'active local presence'} but no website listed. Pitch: ${best_service_to_pitch}.`;
   } else if (website_status === 'outdated') {
-    reason = `Website address suggests a possible modernization opportunity; manual audit required (${business.website_url}). Check usability and loading performance before suggesting changes.`;
+    reason = `Website address suggests a possible modernization opportunity (${business.website_url}). Pitch: ${best_service_to_pitch}.`;
   } else {
-    reason = `Website is listed. Automation potential is an industry estimate; website quality, app presence and existing automation have not been verified.`;
+    reason = `Website is listed. Automation potential is an industry estimate. Pitch: ${best_service_to_pitch}.`;
   }
 
   // Select top 3 relevant services
@@ -145,6 +174,8 @@ export function auditAndScore(business: {
     has_app,
     ai_automation_potential: aiPotential,
     opportunity_score,
+    pitch_score,
+    best_service_to_pitch,
     opportunity_reason: reason,
     suggested_services: services.slice(0, 3),
   };
