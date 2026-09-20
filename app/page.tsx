@@ -247,8 +247,8 @@ export default function DashboardPage() {
         };
       case 'agent':
         return {
-          title: 'Agent Control Center',
-          subtitle: 'Configure target markets, trigger discovery runs, and inspect live logs',
+          title: 'Discover Business Leads',
+          subtitle: 'Find your clients leads with AI Agent',
         };
       case 'leads':
         return {

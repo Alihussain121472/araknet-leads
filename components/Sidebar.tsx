@@ -33,7 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, agent
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, badge: null },
     { 
       id: 'agent', 
-      label: 'Agent Control', 
+      label: 'Discover Business Leads', 
       icon: Bot, 
       badge: agentRunning ? 'Running' : 'Ready' 
     },

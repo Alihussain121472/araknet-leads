@@ -36,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           />
           <span className="text-slate-600 dark:text-slate-300 font-medium">
-            Agent Status: {agentRunning ? 'Running Discovery...' : 'Idle / Ready'}
+            Status: {agentRunning ? 'Running Discovery...' : 'Active'}
           </span>
         </div>
 

@@ -79,10 +79,10 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bot className="w-5 h-5 text-blue-400" />
-                Discovery Agent Controls
+                AI Lead Targeting Engine
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Configure your target geographic territory and vertical market to trigger autonomous discovery.
+                Set your location and niche to let the AI automatically find high-ticket clients.
               </p>
             </div>
 
@@ -282,25 +282,31 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
       </div>
 
       {/* Newly Fetched Leads Table */}
-      {newlyFetchedLeads && newlyFetchedLeads.length > 0 && (
-        <div className="mt-8 space-y-4 animate-in slide-in-from-bottom-4 duration-500">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-amber-400" />
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Fresh Opportunities Discovered</h3>
-          </div>
-          <div className="bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800">
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Business / Owner</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Industry</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Contact</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Service Pitch</th>
+      <div className="mt-8 space-y-4 animate-in slide-in-from-bottom-4 duration-500">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-amber-400" />
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Fresh Opportunities Discovered</h3>
+        </div>
+        <div className="bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800">
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Business / Owner</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Industry</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Contact</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Service Pitch</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {(!newlyFetchedLeads || newlyFetchedLeads.length === 0) ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 text-sm">
+                      No leads discovered yet. Click &quot;Run Agent Now&quot; above to find high-ticket clients!
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {newlyFetchedLeads.map((lead) => (
+                ) : (
+                  newlyFetchedLeads.map((lead) => (
                     <tr key={lead.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="font-semibold text-sm text-slate-900 dark:text-white">{lead.business_name}</div>
@@ -324,13 +330,13 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
                         </p>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
