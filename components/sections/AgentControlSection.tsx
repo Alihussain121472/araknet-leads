@@ -169,10 +169,10 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
               <button
                 onClick={handleRunNow}
                 disabled={agentRunning}
-                className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-slate-900 dark:text-white shadow-xl transition-all ${
+                className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm shadow-xl transition-all ${
                   agentRunning
-                    ? 'bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed border border-slate-300 dark:border-slate-700'
-                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/25 active:scale-95'
+                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/25 active:scale-95 text-white'
                 }`}
               >
                 {agentRunning ? (
