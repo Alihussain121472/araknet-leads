@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Terminal, Database, ShieldAlert, BarChart3 } from 'lucide-react';
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;
@@ -11,51 +12,128 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-5 text-slate-900 dark:text-slate-100">
-      <form action="/api/auth/login" method="post" className="w-full max-w-sm rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 space-y-5 shadow-2xl">
-        <div>
-          <p className="text-sm font-semibold text-cyan-400 tracking-wider">ARAKNET</p>
-          <h1 className="mt-2 text-2xl font-bold">Welcome back</h1>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Sign in to your lead discovery dashboard.</p>
-        </div>
-
-        {errorMessage && (
-          <div role="alert" className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs">
-            {errorMessage}
+    <main className="min-h-screen flex flex-col md:flex-row font-sans bg-[#0B1120] text-[#F8FAFC]">
+      {/* Left Panel: Value Prop & Trust Signals */}
+      <div className="hidden md:flex md:w-1/2 flex-col justify-between p-12 bg-[#111827] border-r border-[#1E293B] relative overflow-hidden">
+        {/* Subtle grid background */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none" />
+        
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 text-[#0EA5E9] font-mono text-xl tracking-wider font-bold">
+            <Terminal className="w-6 h-6" />
+            <span>&gt; ARAKNET<span className="animate-pulse">_</span></span>
           </div>
-        )}
 
-        <label className="block text-sm">
-          Email
-          <input
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            placeholder="you@example.com"
-            className="mt-2 w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
-          />
-        </label>
-
-        <label className="block text-sm">
-          Password
-          <input
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="mt-2 w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
-          />
-        </label>
-
-        <button className="w-full rounded-lg bg-blue-600 p-3 font-semibold text-slate-900 dark:text-white hover:bg-blue-500 transition shadow-lg shadow-blue-600/30">
-          Sign in
-        </button>
-
-        <div className="pt-4 border-t border-slate-200 dark:border-slate-800 text-sm text-center text-slate-500 dark:text-slate-400">
-          Don't have an account? <Link href="/signup" className="text-blue-400 hover:underline">Sign up</Link>
+          <div className="mt-24 space-y-8 max-w-md">
+            <h2 className="text-3xl font-bold tracking-tight">Stop guessing who needs your services.</h2>
+            
+            <ul className="space-y-6 text-[#94A3B8]">
+              <li className="flex items-start gap-4">
+                <div className="p-2 bg-[#0B1120] rounded-md border border-[#1E293B] mt-1">
+                  <Database className="w-4 h-4 text-[#0EA5E9]" />
+                </div>
+                <div>
+                  <h3 className="text-[#F8FAFC] font-semibold text-sm">No manual prospecting.</h3>
+                  <p className="text-sm mt-1 leading-relaxed">We scan local directories so you don't have to.</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="p-2 bg-[#0B1120] rounded-md border border-[#1E293B] mt-1">
+                  <ShieldAlert className="w-4 h-4 text-[#0EA5E9]" />
+                </div>
+                <div>
+                  <h3 className="text-[#F8FAFC] font-semibold text-sm">Built-in technical audits.</h3>
+                  <p className="text-sm mt-1 leading-relaxed">We check their sites for missing SSL, mobile issues, and broken links.</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="p-2 bg-[#0B1120] rounded-md border border-[#1E293B] mt-1">
+                  <BarChart3 className="w-4 h-4 text-[#0EA5E9]" />
+                </div>
+                <div>
+                  <h3 className="text-[#F8FAFC] font-semibold text-sm">Know who to pitch.</h3>
+                  <p className="text-sm mt-1 leading-relaxed">We score every business so you can contact the warmest leads first.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-      </form>
+
+        {/* Mock Terminal Window */}
+        <div className="relative z-10 mt-12 bg-[#0B1120] border border-[#1E293B] rounded-lg p-4 font-mono text-[10px] text-[#94A3B8] shadow-2xl overflow-hidden">
+          <div className="flex gap-1.5 mb-3">
+            <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
+          </div>
+          <div className="text-[#0EA5E9] mb-1">$ araknet scan --city="Local" --industry="Clinics"</div>
+          <div className="text-emerald-400">✔ Found 42 businesses</div>
+          <div className="text-emerald-400">✔ Audited 38 websites</div>
+          <div className="mt-2 text-slate-500">
+            {`{`}
+            <br />&nbsp;&nbsp;"business": "Downtown Dental",
+            <br />&nbsp;&nbsp;"ssl_valid": <span className="text-rose-400">false</span>,
+            <br />&nbsp;&nbsp;"opportunity_score": <span className="text-amber-400">92</span>
+            <br />{`}`}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Panel: Form */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-8 sm:p-12">
+        <div className="w-full max-w-sm space-y-8">
+          
+          {/* Mobile-only logo */}
+          <div className="md:hidden flex items-center gap-2 text-[#0EA5E9] font-mono text-xl tracking-wider font-bold mb-8">
+            <Terminal className="w-6 h-6" />
+            <span>&gt; ARAKNET<span className="animate-pulse">_</span></span>
+          </div>
+
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Back to the hunt.</h1>
+            <p className="mt-2 text-sm text-[#94A3B8]">Sign in to grab your latest local prospects and website audits.</p>
+          </div>
+
+          <form action="/api/auth/login" method="post" className="space-y-5">
+            {errorMessage && (
+              <div role="alert" className="p-3 rounded-md bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs">
+                {errorMessage}
+              </div>
+            )}
+
+            <div className="space-y-1">
+              <label className="block text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">Email Address</label>
+              <input
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                placeholder="you@example.com"
+                className="w-full rounded-md border border-[#1E293B] bg-[#111827] px-4 py-2.5 text-sm text-[#F8FAFC] placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-[#0EA5E9] focus:border-[#0EA5E9] transition-all"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">Password</label>
+              <input
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="w-full rounded-md border border-[#1E293B] bg-[#111827] px-4 py-2.5 text-sm text-[#F8FAFC] focus:outline-none focus:ring-1 focus:ring-[#0EA5E9] focus:border-[#0EA5E9] transition-all"
+              />
+            </div>
+
+            <button className="w-full rounded-md bg-[#0EA5E9] px-4 py-3 text-sm font-bold text-[#F8FAFC] hover:bg-[#0284C7] transition-all shadow-[0_0_15px_rgba(14,165,233,0.3)] active:scale-[0.98]">
+              Access Dashboard
+            </button>
+
+            <div className="pt-6 border-t border-[#1E293B] text-center text-sm text-[#94A3B8]">
+              Don't have an account? <Link href="/signup" className="text-[#0EA5E9] hover:text-[#7DD3FC] transition-colors font-semibold">Start finding leads</Link>
+            </div>
+          </form>
+        </div>
+      </div>
     </main>
   );
 }
