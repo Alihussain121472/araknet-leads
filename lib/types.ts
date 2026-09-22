@@ -29,6 +29,8 @@ export interface Lead {
   city: string;
   address?: string;
   phone?: string;
+  email?: string;
+  owner_name?: string;
   industry: string;
   website_url?: string | null;
   website_status: WebsiteStatus;
