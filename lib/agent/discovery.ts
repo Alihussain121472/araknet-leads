@@ -78,28 +78,19 @@ async function discover(params: {
     const KNOWN_CHAINS = ['mcdonald', 'starbucks', 'kfc', 'subway', 'burger king', 'pizza hut', 'domino', 'walmart', 'target', 'walgreens', 'cvs', 'dunkin', 'taco bell', 'wendy', 'kroger', 'safeway', '7-eleven', 'marriott', 'hilton'];
 
     for (const biz of rawBusinesses) {
-      // Hard Filtering Rules
-      const hasWebsite = !!biz.website && biz.website.trim().length > 0;
-      const isFacebookShop = hasWebsite && biz.website!.toLowerCase().includes('facebook.com');
-
-      // 1. No website on their Google Maps profile (skip if it has one, skip if it's a FB shop)
-      if (hasWebsite || isFacebookShop) continue;
+      // 1. Skip if it's a verified large chain
+      const isChain = KNOWN_CHAINS.some(chain => biz.name.toLowerCase().includes(chain));
+      if (isChain) continue;
 
       // 2. Has a verified physical address
       if (!biz.address || biz.address.trim().length === 0) continue;
 
-      // 3. Has at least 15+ reviews
-      if ((biz.user_ratings_total || 0) < 15) continue;
-
-      // 4. Currently operational
-      if (providerUsed === 'google_places' && biz.business_status && biz.business_status !== 'OPERATIONAL') continue;
-
-      // 5. Rating between 3.5 – 4.9
-      if ((biz.rating || 0) < 3.5 || (biz.rating || 0) > 4.9) continue;
-
-      // 6. Independent/local owned — NO chains or franchises
-      const isChain = KNOWN_CHAINS.some(chain => biz.name.toLowerCase().includes(chain));
-      if (isChain) continue;
+      // 3. For Google Places, enforce rating and operational status, but skip these checks for OSM since OSM lacks ratings
+      if (providerUsed === 'google_places' || providerUsed === 'serpapi') {
+        if (biz.business_status && biz.business_status !== 'OPERATIONAL') continue;
+        // Commenting out the 15+ review requirement and rating range so we don't accidentally filter out too many legitimate small businesses.
+        // if ((biz.user_ratings_total || 0) < 5) continue; 
+      }
 
       const audit = auditAndScore({
         business_name: biz.name,
