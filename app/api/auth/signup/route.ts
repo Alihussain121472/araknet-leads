@@ -20,10 +20,9 @@ export async function POST(request: NextRequest) {
 
     const allUsers = await getAllUsers();
     
-    // First user is automatically admin, OR matches env ADMIN_EMAIL
     let role: 'admin' | 'user' = 'user';
     const adminEmail = (process.env.ADMIN_EMAIL || '').toLowerCase().trim();
-    if (allUsers.length === 0 || (adminEmail && cleanEmail === adminEmail)) {
+    if (adminEmail && cleanEmail === adminEmail) {
       role = 'admin';
     }
 

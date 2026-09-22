@@ -6,22 +6,38 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: "class",
+  darkMode: ["class", '[data-theme="dark"]'],
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6",
-          600: "#2563eb",
-          700: "#1d4ed8",
-          800: "#1e40af",
-          900: "#1e3a8a",
+        page: "var(--bg-page)",
+        card: "var(--bg-card)",
+        "card-hover": "var(--bg-card-hover)",
+        terminal: "var(--bg-terminal)",
+        input: "var(--bg-input)",
+        border: {
+          default: "var(--border-default)",
+          subtle: "var(--border-subtle)",
+          strong: "var(--border-strong)",
         },
+        text: {
+          primary: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+          muted: "var(--text-muted)",
+          inverse: "var(--text-inverse)",
+        },
+        brand: {
+          primary: "var(--brand-primary)",
+          hover: "var(--brand-hover)",
+          glow: "var(--brand-glow)",
+        },
+        term: {
+          green: "var(--terminal-green)",
+          bg: "var(--terminal-bg)",
+          text: "var(--terminal-text)",
+          prompt: "var(--terminal-prompt)",
+          dim: "var(--terminal-dim)",
+        }
       },
     },
   },

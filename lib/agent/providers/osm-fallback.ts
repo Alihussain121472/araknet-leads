@@ -145,38 +145,7 @@ export async function searchOpenStreetMap(params: {
     console.warn('[Nominatim POI search fallback failed]:', nomErr);
   }
 
-  // 4. Resilient local business directory generation if public OSM servers are down/rate-limited
-  // Guarantees agent discovery NEVER crashes with 406 or unhandled error
-  const syntheticIndustries: Record<string, string[]> = {
-    'Dental Clinic': ['Dental Care Center', 'Advanced Dental Studio', 'Family Dental Practice', 'Smile Dental Clinic'],
-    'Clinic & Healthcare': ['Health & Wellness Clinic', 'Medical Diagnostic Center', 'City Care Clinic', 'Integrated Health Practice'],
-    'Restaurant': ['Bistro & Kitchen', 'Artisan Cafe & Grill', 'The Corner Table', 'Heritage Kitchen'],
-    'Salon & Wellness': ['Aura Wellness Spa', 'Luxe Beauty Lounge', 'Urban Hair Studio', 'Reflections Spa'],
-    'Automotive': ['Auto Care Experts', 'City Mechanical & Tyres', 'Precision Motors', 'Express Auto Repairs'],
-    'Retail & Boutique': ['Urban Lifestyle Boutique', 'Heritage Apparel', 'The Collective Store', 'Moda Retail'],
-    'Legal & Financial': ['Advisory Partners', 'Strategic Wealth & Legal', 'Metropolitan Financial', 'Premier Legal Advocates'],
-    'Fitness & Gym': ['Iron & Edge Fitness', 'Apex Performance Club', 'Velocity Gym', 'Peak Training Studio'],
-    'Home Services': ['Precision Home Renovations', 'Citywide Plumbing & Electric', 'Apex Roofing Solutions', 'Elite HVAC Services'],
-  };
-
-  const defaultTemplates = syntheticIndustries[industry] || [
-    `${industry} Group`,
-    `${city} ${industry} Studio`,
-    `Premier ${industry} Services`,
-    `Advanced ${industry} Solutions`
-  ];
-
-  const streets = ['Main St', 'High St', 'Commercial Ave', 'Central Blvd', 'Market Rd'];
-
-  return defaultTemplates.slice(0, limit).map((nameTemplate, i) => ({
-    name: `${nameTemplate} of ${city}`,
-    address: `${100 + i * 15} ${streets[i % streets.length]}, ${city}, ${country}`,
-    phone: `+1 (555) ${200 + i * 11}-${1000 + i * 23}`,
-    website: undefined, // Great for prospecting! No active website detected triggers high opportunity score
-    rating: 3.8 + (i % 3) * 0.4,
-    user_ratings_total: 12 + i * 7,
-    industry: industry === 'All' ? 'Local Business' : industry,
-    place_id: `dir-${city.toLowerCase()}-${i + 1}`,
-    maps_url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${nameTemplate} ${city}`)}`
-  }));
+  // If all attempts fail or return nothing, return an empty array
+  // We no longer generate synthetic businesses.
+  return [];
 }

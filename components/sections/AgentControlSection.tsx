@@ -75,14 +75,14 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left 2 Cols: Form Controls */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 backdrop-blur-md shadow-xl space-y-6">
+          <div className="p-6 rounded-2xl bg-card border border-border-default backdrop-blur-md shadow-xl space-y-6">
             <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Bot className="w-5 h-5 text-blue-400" />
-                AI Lead Targeting Engine
+              <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+                <Bot className="w-5 h-5 text-brand-primary" />
+                Discovery Agent Controls
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Set your location and niche to let the AI automatically find high-ticket clients.
+              <p className="text-xs text-text-secondary mt-1">
+                Configure your target geographic territory and vertical market to trigger autonomous discovery.
               </p>
             </div>
 
@@ -90,27 +90,27 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Country */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-blue-400" />
+                <label className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-brand-primary" />
                   Target Country
                 </label>
-                <input aria-label="Target Country" list="countries" value={selectedCountry} onChange={e=>handleCountryChange(e.target.value)} disabled={agentRunning} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-3" />
+                <input aria-label="Target Country" list="countries" value={selectedCountry} onChange={e=>handleCountryChange(e.target.value)} disabled={agentRunning} className="w-full bg-page border border-border-default rounded-xl p-3" />
                 <datalist id="countries">{Object.keys(COUNTRIES_AND_CITIES).map(c=><option key={c} value={c}/>)}</datalist>
               </div>
 
               {/* City */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5 text-cyan-400" />
                   Target City
                 </label>
-                <input aria-label="Target City" list="cities" value={selectedCity} onChange={e=>setSelectedCity(e.target.value)} disabled={agentRunning} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl p-3" />
+                <input aria-label="Target City" list="cities" value={selectedCity} onChange={e=>setSelectedCity(e.target.value)} disabled={agentRunning} className="w-full bg-page border border-border-default rounded-xl p-3" />
                 <datalist id="cities">{availableCities.map(c=><option key={c} value={c}/>)}</datalist>
               </div>
 
               {/* Industry */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
                   <Layers className="w-3.5 h-3.5 text-indigo-400" />
                   Target Industry
                 </label>
@@ -118,10 +118,10 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
                   value={selectedIndustry}
                   onChange={(e) => setSelectedIndustry(e.target.value)}
                   disabled={agentRunning}
-                  className="w-full bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
+                  className="w-full bg-page border border-border-default rounded-xl px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:border-blue-500 transition-colors"
                 >
                   {INDUSTRIES.map((ind) => (
-                    <option key={ind} value={ind} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+                    <option key={ind} value={ind} className="bg-card text-text-primary">
                       {ind}
                     </option>
                   ))}
@@ -130,7 +130,7 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
 
               {/* Max Batch Count */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                   Batch Size (Leads per Run)
                 </label>
@@ -138,28 +138,28 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
                   value={maxResults}
                   onChange={(e) => setMaxResults(Number(e.target.value))}
                   disabled={agentRunning}
-                  className="w-full bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
+                  className="w-full bg-page border border-border-default rounded-xl px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:border-blue-500 transition-colors"
                 >
-                  <option value={5} className="bg-white dark:bg-slate-900">5 Businesses</option>
-                  <option value={8} className="bg-white dark:bg-slate-900">8 Businesses (Recommended)</option>
-                  <option value={15} className="bg-white dark:bg-slate-900">15 Businesses</option>
-                  <option value={20} className="bg-white dark:bg-slate-900">20 Businesses</option>
+                  <option value={5} className="bg-card">5 Businesses</option>
+                  <option value={8} className="bg-card">8 Businesses (Recommended)</option>
+                  <option value={15} className="bg-card">15 Businesses</option>
+                  <option value={20} className="bg-card">20 Businesses</option>
                 </select>
               </div>
             </div>
 
             {/* Run Action & Status Indicator */}
-            <div className="pt-4 border-t border-slate-200 dark:border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="pt-4 border-t border-border-default flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className={`w-3 h-3 rounded-full ${
                   agentRunning ? 'bg-amber-400 animate-ping' : latestRun?.status === 'completed' ? 'bg-emerald-400' : 'bg-blue-400'
                 }`} />
                 <div>
-                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
-                    Status: {agentRunning ? 'Scanning & Auditing...' : latestRun?.status === 'completed' ? 'Last Run Completed' : 'Idle'}
+                  <p className="text-xs font-semibold text-text-primary">
+                    Agent Status: {agentRunning ? 'Active' : 'Idle'}
                   </p>
                   {latestRun?.leads_found_count !== undefined && (
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    <p className="text-[11px] text-text-secondary">
                       Last scan produced {latestRun.leads_found_count} leads in {latestRun.city} ({latestRun.run_duration_ms ? `${(latestRun.run_duration_ms / 1000).toFixed(1)}s` : 'fast'})
                     </p>
                   )}
@@ -190,62 +190,22 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
             </div>
           </div>
 
-          {scheduleError && <p role="alert" className="text-rose-400">{scheduleError}</p>}
-          {/* Schedule Configuration Card */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 backdrop-blur-md shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-purple-400" />
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white">Automated Recurring Schedule</h4>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md">
-                Enable background cron runs to discover and audit new businesses automatically without manual intervention.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <select
-                value={scheduleFrequency}
-                onChange={(e) => saveSchedule(scheduleEnabled, e.target.value as "daily" | "weekly")}
-                disabled={!scheduleEnabled}
-                className={`bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none ${
-                  !scheduleEnabled ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-              >
-                <option value="daily">Run Daily (09:00 UTC)</option>
-                <option value="weekly">Run Weekly (Mondays)</option>
-              </select>
-
-              <button
-                type="button"
-                onClick={() => saveSchedule(!scheduleEnabled, scheduleFrequency)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  scheduleEnabled ? 'bg-blue-600' : 'bg-slate-800'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    scheduleEnabled ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
+          {/* Removed Schedule Configuration Card (Unsupported in multi-tenant without user context) */}
         </div>
 
         {/* Right 1 Col: Live Activity Terminal / Console */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <h4 className="text-xs font-bold text-text-primary uppercase tracking-wider flex items-center gap-2">
               <Terminal className="w-4 h-4 text-cyan-400" />
               Live Agent Console
             </h4>
             <span className="text-[10px] text-slate-500 font-mono">STDOUT / JSON</span>
           </div>
 
-          <div className="h-[420px] rounded-2xl bg-slate-950 border border-slate-800 p-4 font-mono text-xs overflow-y-auto space-y-2.5 shadow-inner">
+          <div className="h-[420px] rounded-2xl terminal-block p-4 font-mono text-xs overflow-y-auto space-y-2.5 shadow-inner">
             <div className="text-[11px] text-slate-500 pb-2 border-b border-slate-900 flex items-center gap-1.5">
-              <Info className="w-3.5 h-3.5 text-blue-400" />
+              <Info className="w-3.5 h-3.5 text-brand-primary" />
               <span>Real-time agent execution stream</span>
             </div>
 
@@ -255,8 +215,8 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
               </div>
             ) : (
               logs.map((log, i) => {
-                let badgeColor = 'text-slate-500 dark:text-slate-400';
-                if (log.level === 'info') badgeColor = 'text-blue-400';
+                let badgeColor = 'text-text-secondary';
+                if (log.level === 'info') badgeColor = 'text-brand-primary';
                 if (log.level === 'success') badgeColor = 'text-emerald-400';
                 if (log.level === 'warn') badgeColor = 'text-amber-400';
                 if (log.level === 'error') badgeColor = 'text-rose-400';
@@ -285,23 +245,23 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
       <div className="mt-8 space-y-4 animate-in slide-in-from-bottom-4 duration-500">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-amber-400" />
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Fresh Opportunities Discovered</h3>
+          <h3 className="text-lg font-bold text-text-primary">Fresh Opportunities Discovered</h3>
         </div>
-        <div className="bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-xl overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border-default shadow-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800">
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Business / Owner</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Industry</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Contact</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Service Pitch</th>
+                <tr className="bg-page border-b border-border-default">
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-secondary">Business / Owner</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-secondary">Industry</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-secondary">Contact</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-secondary">Service Pitch</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {(!newlyFetchedLeads || newlyFetchedLeads.length === 0) ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 text-sm">
+                    <td colSpan={4} className="px-6 py-12 text-center text-text-secondary text-sm">
                       No leads discovered yet. Click &quot;Run Agent Now&quot; above to find high-ticket clients!
                     </td>
                   </tr>
@@ -309,23 +269,24 @@ export const AgentControlSection: React.FC<AgentControlSectionProps> = ({
                   newlyFetchedLeads.map((lead) => (
                     <tr key={lead.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-sm text-slate-900 dark:text-white">{lead.business_name}</div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Owner: {lead.owner_name || 'N/A'}</div>
+                        <div className="font-semibold text-sm text-text-primary">{lead.business_name}</div>
+                        <div className="text-xs text-text-secondary mt-1">Owner: {lead.owner_name || 'N/A'}</div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300">
+                      <td className="px-6 py-4 text-sm text-text-primary">
                         {lead.industry}
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300 space-y-1">
+                      <td className="px-6 py-4 text-sm text-text-primary space-y-1">
                         <div>{lead.email || 'No email found'}</div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400">{lead.phone || 'No phone'}</div>
+                        <div className="text-xs text-text-secondary">{lead.phone || 'No phone'}</div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-bold border border-amber-500/20">
                             {lead.opportunity_score}/100
                           </span>
+                          <span className="text-xs font-semibold text-cyan-500">{lead.best_service_to_pitch}</span>
                         </div>
-                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2 italic">
+                        <p className="text-xs text-text-secondary mt-2 line-clamp-2 italic">
                           {lead.opportunity_reason}
                         </p>
                       </td>

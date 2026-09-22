@@ -7,8 +7,6 @@ import { OverviewSection } from '@/components/sections/OverviewSection';
 import { AgentControlSection } from '@/components/sections/AgentControlSection';
 import { LeadsTableSection } from '@/components/sections/LeadsTableSection';
 import { LeadDetailModal } from '@/components/sections/LeadDetailModal';
-import { ExportReportsSection } from '@/components/sections/ExportReportsSection';
-import { GrowthSection } from '@/components/sections/GrowthSection';
 import { SettingsSection } from '@/components/sections/SettingsSection';
 import { ProposalAgentSection } from '@/components/sections/ProposalAgentSection';
 import { apiFetch } from '@/lib/api-client';
@@ -143,8 +141,8 @@ export default function DashboardPage() {
   const handleQuickRun = async () => {
     setActiveTab('agent');
     await handleTriggerRun({
-      country: 'Pakistan',
-      city: 'Karachi',
+      country: 'United States',
+      city: 'Austin',
       industry: 'Clinic & Healthcare',
       maxResults: 8,
     });
@@ -248,24 +246,22 @@ export default function DashboardPage() {
       case 'agent':
         return {
           title: 'Discover Business Leads',
-          subtitle: 'Find your clients leads with AI Agent',
+          subtitle: 'Configure target markets, trigger discovery runs, and inspect live logs to find your clients leads with ai agent',
         };
       case 'leads':
         return {
-          title: 'Leads Directory',
+          title: 'My Leads',
           subtitle: `Discovered business candidates (${leads.length} total) with digital presence audit`,
         };
-      case 'reports':
+      case 'proposals':
         return {
-          title: 'Export & Market Reports',
-          subtitle: 'Dataset exports and geographic/industry intelligence distributions',
+          title: 'Proposals',
+          subtitle: 'Generate targeted proposals for your selected leads',
         };
-      case 'growth':
-        return { title: 'Growth Workspace', subtitle: 'Search multiple cities, prioritize prospects and prepare outreach' };
       case 'settings':
         return {
-          title: 'System Settings & Keys',
-          subtitle: 'API vault, automated recurring cron schedules, and alert webhooks',
+          title: 'System Settings',
+          subtitle: 'API keys, system configuration, and preferences',
         };
       default:
         return { title: 'Dashboard', subtitle: 'Lead Discovery Platform' };
@@ -275,7 +271,7 @@ export default function DashboardPage() {
   const headerInfo = getTabHeader();
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-blue-600 selection:text-slate-900 dark:text-white">
+    <div className="flex min-h-screen bg-page text-text-primary selection:bg-brand-primary selection:text-text-primary">
       {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
@@ -299,7 +295,7 @@ export default function DashboardPage() {
 
         <main className="p-4 md:p-8 max-w-7xl w-full mx-auto flex-1">
           {error && <div role="alert" className="mb-5 rounded-xl border border-rose-800 bg-rose-950 p-4 text-sm">{error}<button onClick={() => setError('')} className="ml-4 underline">Dismiss</button></div>}
-          <form action="/api/auth/logout" method="post" className="mb-4 text-right"><button className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white">Sign out</button></form>
+          <form action="/api/auth/logout" method="post" className="mb-4 text-right"><button className="text-xs text-text-secondary hover:text-text-primary">Sign out</button></form>
           {activeTab === 'overview' && (
             <OverviewSection
               stats={stats}
@@ -328,21 +324,15 @@ export default function DashboardPage() {
               onUpdateStatus={handleUpdateStatus}
               onExportCsv={handleExportCsv}
               isLoading={isLoadingLeads}
+              onCreateProposal={(lead) => {
+                setSelectedLead(lead);
+                setActiveTab('proposals');
+              }}
             />
           )}
-
-          {activeTab === 'reports' && (
-            <ExportReportsSection
-              leads={leads}
-              stats={stats}
-              onExportCsv={handleExportCsv}
-            />
-          )}
-
-          {activeTab === 'growth' && <GrowthSection leads={leads} busy={agentRunning} onBusyChange={setAgentRunning} onRefresh={async () => { await Promise.all([fetchLeads(), fetchStats(), fetchAgentStatus()]); }} onOpenLead={setSelectedLead} />}
 
           {activeTab === 'proposals' && (
-            <ProposalAgentSection leads={leads} />
+            <ProposalAgentSection leads={leads} selectedLeadForProposal={selectedLead} />
           )}
 
           {activeTab === 'settings' && (
@@ -352,14 +342,20 @@ export default function DashboardPage() {
       </div>
 
       {/* Slide-over Lead Detail Drawer */}
-      <LeadDetailModal
-        lead={selectedLead}
-        onClose={() => setSelectedLead(null)}
-        onUpdateStatus={handleUpdateStatus}
-        onUpdateTags={handleUpdateTags}
-        onAddNote={handleAddNote}
-        onDeleteLead={handleDeleteLead}
-      />
+      {selectedLead && activeTab !== 'proposals' && (
+        <LeadDetailModal
+          lead={selectedLead}
+          onClose={() => setSelectedLead(null)}
+          onUpdateStatus={handleUpdateStatus}
+          onUpdateTags={handleUpdateTags}
+          onAddNote={handleAddNote}
+          onDeleteLead={handleDeleteLead}
+          onCreateProposal={(lead) => {
+            setSelectedLead(lead);
+            setActiveTab('proposals');
+          }}
+        />
+      )}
     </div>
   );
 }

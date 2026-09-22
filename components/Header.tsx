@@ -21,21 +21,21 @@ export const Header: React.FC<HeaderProps> = ({
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
   return (
-    <header className="h-20 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-10">
+    <nav className="h-20 px-8 flex items-center justify-between sticky top-0 z-10 shadow-sm">
       <div>
-        <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{title}</h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</p>
+        <h1 className="logo-text text-xl">{title}</h1>
+        <p className="text-[var(--text-secondary)] mt-0.5 text-xs">{subtitle}</p>
       </div>
 
       <div className="flex items-center gap-3">
         {/* Agent Status Pill */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 text-xs">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'var(--bg-input)', border: '1px solid var(--border-default)' }}>
           <span
             className={`w-2 h-2 rounded-full ${
               agentRunning ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'
             }`}
           />
-          <span className="text-slate-600 dark:text-slate-300 font-medium">
+          <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
             Status: {agentRunning ? 'Running Discovery...' : 'Active'}
           </span>
         </div>
@@ -43,7 +43,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Theme Toggle */}
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700/80 border border-slate-300 dark:border-slate-700/60 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all shadow-sm"
+          className="btn-ghost p-2 rounded-xl"
           title="Toggle Theme"
         >
           {mounted && theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -52,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Refresh button */}
         <button
           onClick={onRefresh}
-          className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700/80 border border-slate-300 dark:border-slate-700/60 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all shadow-sm"
+          className="btn-ghost p-2 rounded-xl"
           title="Refresh Data"
         >
           <RefreshCw className="w-4 h-4" />
@@ -61,10 +61,8 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onQuickRun}
           disabled={agentRunning}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold shadow-lg transition-all ${
-            agentRunning
-              ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700'
-              : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/25 active:scale-95 text-white'
+          className={`btn-primary flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold ${
+            agentRunning ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
           {agentRunning ? (
@@ -80,6 +78,6 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </button>
       </div>
-    </header>
+    </nav>
   );
 };

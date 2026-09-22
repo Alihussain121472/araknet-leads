@@ -242,3 +242,48 @@ export async function getAdminStats() {
   const runs = await db.collection('la_runs').countDocuments();
   return { totalUsers: users, totalLeadsSystemWide: leads, totalRunsSystemWide: runs };
 }
+
+// =======================
+// Proposals & Profiles
+// =======================
+import { SavedProposal, FreelancerProfile } from './types';
+
+export async function saveProposal(proposal: SavedProposal) {
+  const auth = await requireAccess();
+  const proposalWithUser = { ...proposal, user_id: auth.sub };
+  await save('la_proposals', proposal.id, proposalWithUser, proposal.lead_id);
+  return proposalWithUser;
+}
+
+export async function getProposals(): Promise<SavedProposal[]> {
+  const auth = await requireAccess();
+  return (await records<SavedProposal>('la_proposals', auth.sub)).sort((a, b) => b.created_at.localeCompare(a.created_at));
+}
+
+export async function deleteProposal(id: string): Promise<boolean> {
+  const auth = await requireAccess();
+  const db = await database();
+  const result = await db.collection('la_proposals').deleteOne({ id, 'data.user_id': auth.sub });
+  return result.deletedCount > 0;
+}
+
+export async function saveProfile(profile: Partial<FreelancerProfile>) {
+  const auth = await requireAccess();
+  const existing = await getProfile();
+  const cleanProfile: FreelancerProfile = {
+    id: auth.sub,
+    user_id: auth.sub,
+    freelancer_profile: profile.freelancer_profile || existing?.freelancer_profile || '',
+    relevant_experience: profile.relevant_experience || existing?.relevant_experience || '',
+    proposed_approach: profile.proposed_approach || existing?.proposed_approach || '',
+    tone: profile.tone || existing?.tone || 'Professional',
+  };
+  await save('la_profiles', auth.sub, cleanProfile);
+  return cleanProfile;
+}
+
+export async function getProfile(): Promise<FreelancerProfile | null> {
+  const auth = await requireAccess();
+  const data = await records<FreelancerProfile>('la_profiles', auth.sub);
+  return data.length > 0 ? data[0] : null;
+}

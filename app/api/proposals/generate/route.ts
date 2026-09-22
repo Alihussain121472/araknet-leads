@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       budget_range: budget_range || '',
       tone: tone || 'Professional',
       achievements: achievements || '',
+      is_structured: Boolean(body.is_structured),
     };
 
     const response = await generateProposalWithAi(input, {

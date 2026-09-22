@@ -40,7 +40,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
       value: stats.totalLeads,
       icon: Users,
       trend: 'Saved business records',
-      color: 'from-blue-500/20 to-cyan-500/10 border-blue-500/30 text-blue-400',
+      color: 'from-blue-500/20 to-cyan-500/10 border-blue-500/30 text-brand-primary',
     },
     {
       title: 'Leads Contacted',
@@ -110,17 +110,17 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           return (
             <div
               key={idx}
-              className={`p-5 rounded-2xl bg-gradient-to-br ${card.color} bg-white dark:bg-slate-900/60 border backdrop-blur-md shadow-lg`}
+              className={`p-5 rounded-2xl bg-gradient-to-br ${card.color} bg-card border backdrop-blur-md shadow-lg`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{card.title}</span>
-                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80">
+                <span className="text-xs font-medium text-text-secondary">{card.title}</span>
+                <div className="p-2 rounded-xl bg-page border border-border-default">
                   <Icon className="w-4 h-4" />
                 </div>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{card.value}</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">{card.trend}</div>
+                <div className="text-3xl font-extrabold text-text-primary tracking-tight">{card.value}</div>
+                <div className="text-[11px] text-text-secondary mt-1 font-medium">{card.trend}</div>
               </div>
             </div>
           );
@@ -133,15 +133,15 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <h3 className="text-base font-bold text-text-primary flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-amber-400" />
                 Prime Digital Opportunities
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Businesses with highest need for websites & automation</p>
+              <p className="text-xs text-text-secondary">Businesses with highest need for websites & automation</p>
             </div>
             <button
               onClick={onViewAllLeads}
-              className="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
+              className="text-xs font-semibold text-brand-primary hover:text-blue-300 flex items-center gap-1 transition-colors"
             >
               <span>View All Leads</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -157,12 +157,12 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                 <div
                   key={lead.id}
                   onClick={() => onOpenLead(lead)}
-                  className="group p-4 rounded-xl bg-white dark:bg-slate-900/70 hover:bg-slate-800/60 border border-slate-200 dark:border-slate-800/80 hover:border-blue-500/40 transition-all cursor-pointer shadow-md"
+                  className="group p-4 rounded-xl bg-card hover:bg-slate-800/60 border border-border-default hover:border-blue-500/40 transition-all cursor-pointer shadow-md"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="space-y-1 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-400 transition-colors">
+                        <h4 className="font-semibold text-text-primary group-hover:text-brand-primary transition-colors">
                           {lead.business_name}
                         </h4>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${statusCfg.bg} ${statusCfg.text} ${statusCfg.border}`}>
@@ -173,7 +173,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                         </span>
                       </div>
                       
-                      <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                      <p className="text-xs text-text-secondary flex items-center gap-2">
                         <span>{lead.industry}</span>
                         <span>•</span>
                         <span>{lead.city}, {lead.country}</span>
@@ -186,7 +186,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                       </p>
 
                       {lead.opportunity_reason && (
-                        <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-1 italic pt-1">
+                        <p className="text-xs text-text-primary line-clamp-1 italic pt-1">
                           &ldquo;{lead.opportunity_reason}&rdquo;
                         </p>
                       )}
@@ -195,9 +195,9 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                     <div className="text-right flex flex-col items-end justify-center">
                       <div className="flex items-baseline gap-1">
                         <span className="text-xl font-black text-amber-400">{lead.opportunity_score}</span>
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">/100</span>
+                        <span className="text-[10px] text-text-secondary font-semibold">/100</span>
                       </div>
-                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider">Opportunity</span>
+                      <span className="text-[10px] text-text-secondary font-medium uppercase tracking-wider">Opportunity</span>
                     </div>
                   </div>
                 </div>
@@ -209,25 +209,25 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
         {/* Right Column: Live Activity Feed */}
         <div className="space-y-4">
           <div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Clock className="w-4 h-4 text-blue-400" />
+            <h3 className="text-base font-bold text-text-primary flex items-center gap-2">
+              <Clock className="w-4 h-4 text-brand-primary" />
               Recent Activity Feed
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Chronological timeline of agent & lead events</p>
+            <p className="text-xs text-text-secondary">Chronological timeline of agent & lead events</p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 backdrop-blur-md space-y-4 shadow-lg">
+          <div className="p-5 rounded-2xl bg-card border border-border-default backdrop-blur-md space-y-4 shadow-lg">
             {activities.length === 0 ? (
-              <p className="text-xs text-slate-500 dark:text-slate-400 text-center py-6">No recent activity recorded yet.</p>
+              <p className="text-xs text-text-secondary text-center py-6">No recent activity recorded yet.</p>
             ) : (
               activities.map((act, index) => (
                 <div key={act.id || index} className="flex items-start gap-3 text-xs">
                   <div className="w-6 h-6 rounded-full bg-blue-500/15 border border-blue-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-brand-primary" />
                   </div>
                   <div className="space-y-0.5 flex-1">
-                    <p className="text-slate-800 dark:text-slate-200 font-medium leading-tight">{act.description}</p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    <p className="text-text-primary font-medium leading-tight">{act.description}</p>
+                    <p className="text-[11px] text-text-secondary">
                       {new Date(act.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>

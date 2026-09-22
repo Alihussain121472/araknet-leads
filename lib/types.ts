@@ -132,3 +132,24 @@ export interface DashboardStats {
   conversionRate: number;
   highOpportunityCount: number;
 }
+
+export interface SavedProposal {
+  id: string;
+  user_id: string;
+  lead_id?: string;
+  business_name?: string;
+  created_at: string;
+  updated_at: string;
+  platform: string;
+  content: string;
+  is_structured: boolean;
+}
+
+export interface FreelancerProfile {
+  id: string;
+  user_id: string;
+  freelancer_profile: string;
+  relevant_experience: string;
+  proposed_approach: string;
+  tone: string;
+}

@@ -160,7 +160,14 @@ async function discover(params: {
     // Sort by pitch_score highest first
     const ranked = enrichedLeads.sort((a,b) => b.pitch_score - a.pitch_score);
     const inserted = await addLeads(ranked, maxResults);
-    logs.push({ time: new Date().toLocaleTimeString(), level: 'success', message: `${inserted.length} new leads saved from ${rawBusinesses.length} candidates. Existing leads were preserved.` });
+    
+    if (rawBusinesses.length === 0) {
+      logs.push({ time: new Date().toLocaleTimeString(), level: 'warn', message: 'No matches found for your search criteria. Try a different city or industry.' });
+    } else if (inserted.length === 0) {
+      logs.push({ time: new Date().toLocaleTimeString(), level: 'warn', message: `Found ${rawBusinesses.length} candidates, but all are existing duplicates already saved in your dashboard.` });
+    } else {
+      logs.push({ time: new Date().toLocaleTimeString(), level: 'success', message: `${inserted.length} new leads saved. Existing duplicates were safely ignored.` });
+    }
 
     // 4. Update Agent Run Record
     const duration = Date.now() - startTime;
@@ -184,7 +191,7 @@ async function discover(params: {
     logs.push({
       time: new Date().toLocaleTimeString(),
       level: 'error',
-      message: `Agent execution encountered an issue: ${error.message || 'Unknown error'}`,
+      message: `Search failure: ${error.message || 'Unable to fetch data from providers at this time.'}`,
     });
 
     const failedRun: AgentRun = {

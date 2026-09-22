@@ -20,5 +20,6 @@ export function databaseErrorMessage(error: unknown): string {
     }
   }
 
-  return `MongoDB connection error: ${msg}`;
+  const sanitizedMsg = msg.replace(/\/\/[^:]+:[^@]+@/, '//***:***@');
+  return `MongoDB connection error: ${sanitizedMsg}`;
 }
