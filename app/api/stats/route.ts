@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const stats = await getStats();
     const activities = await getAllActivities(8);
-    return NextResponse.json({ success: true, stats, recentActivities: activities });
+    return NextResponse.json({ success: true, stats, recentActivities: activities }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

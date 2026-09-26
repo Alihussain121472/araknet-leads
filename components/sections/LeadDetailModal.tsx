@@ -104,7 +104,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/70 backdrop-blur-sm animate-fadeIn">
       {/* Slide-over Container */}
-      <div className="w-full max-w-2xl bg-card border-l border-border-default h-screen overflow-y-auto flex flex-col justify-between shadow-2xl">
+      <div className="w-full max-w-2xl bg-card border-l border-border-default h-screen overflow-y-auto flex flex-col justify-between shadow-sm dark:shadow-2xl">
         {/* Header Bar */}
         <div>
           <div className="p-6 border-b border-border-default flex items-start justify-between sticky top-0 bg-card backdrop-blur-md z-10">
@@ -138,14 +138,14 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
               </button>
               <button
                 onClick={() => onDeleteLead(lead.id)}
-                className="p-2 rounded-xl text-text-secondary hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                className="p-2 rounded-xl text-text-secondary hover:text-accent-rose hover:bg-rose-500/10 transition-colors"
                 title="Delete Lead"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl text-text-secondary hover:text-text-primary hover:bg-slate-800 transition-colors"
+                className="p-2 rounded-xl text-text-secondary hover:text-text-primary hover:bg-card-hover transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -169,7 +169,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                       className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all ${
                         active
                           ? `${cfg.bg} ${cfg.text} border ${cfg.border} shadow-sm`
-                          : 'bg-slate-800/60 text-text-secondary hover:text-text-primary'
+                          : 'bg-card-hover text-text-secondary hover:text-text-primary'
                       }`}
                     >
                       {cfg.label}
@@ -180,19 +180,19 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
             </div>
 
             {/* Pitch Score & Pitch Breakdown */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/10 via-slate-900 to-slate-950 border border-amber-500/30 space-y-4">
+            <div className="p-6 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-500/30 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-xl shadow-inner">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-accent-amber font-black text-xl shadow-inner">
                     {lead.pitch_score}/10
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-text-primary flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-amber-400" />
+                      <Sparkles className="w-4 h-4 text-accent-amber" />
                       Pitch Score
                     </h3>
                     <p className="text-xs text-text-secondary">
-                      Best Service to Pitch: <span className="text-cyan-400 font-semibold">{lead.best_service_to_pitch}</span>
+                      Best Service to Pitch: <span className="text-accent-cyan font-semibold">{lead.best_service_to_pitch}</span>
                     </p>
                   </div>
                 </div>
@@ -211,7 +211,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   <p className="text-[11px] font-bold text-text-secondary uppercase tracking-wider">Recommended Pitch Services</p>
                   <div className="flex flex-wrap gap-2">
                     {lead.suggested_services.map((svc, i) => (
-                      <span key={i} className="text-xs px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-300 font-medium">
+                      <span key={i} className="text-xs px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/30 text-accent-blue font-medium">
                         ✦ {svc}
                       </span>
                     ))}
@@ -226,10 +226,10 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* Phone */}
                 <div className="p-3.5 rounded-xl bg-page border border-border-default flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <Phone className="w-4 h-4 text-accent-emerald flex-shrink-0" />
                   <div className="overflow-hidden">
                     <p className="text-[10px] text-text-secondary">Phone</p>
-                    <a href={`tel:${lead.phone}`} className="text-xs font-semibold text-text-primary hover:text-brand-primary truncate block">
+                    <a href={`tel:${lead.phone}`} className="text-xs font-semibold text-text-primary hover:text-brand-link truncate block">
                       {lead.phone || 'Not available'}
                     </a>
                   </div>
@@ -237,27 +237,27 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
 
                 {/* Website */}
                 <div className="p-3.5 rounded-xl bg-page border border-border-default flex items-center gap-3">
-                  <Globe className="w-4 h-4 text-brand-primary flex-shrink-0" />
+                  <Globe className="w-4 h-4 text-brand-link flex-shrink-0" />
                   <div className="overflow-hidden">
                     <p className="text-[10px] text-text-secondary">Website</p>
                     {lead.website_url ? (
-                      <a href={lead.website_url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-brand-primary hover:underline truncate flex items-center gap-1">
+                      <a href={lead.website_url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-brand-link hover:underline truncate flex items-center gap-1">
                         <span>{lead.website_url.replace(/https?:\/\//, '')}</span>
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     ) : (
-                      <span className="text-xs text-rose-400 font-medium">No Website Found</span>
+                      <span className="text-xs text-accent-rose font-medium">No Website Found</span>
                     )}
                   </div>
                 </div>
 
                 {/* Google Maps Link */}
                 <div className="p-3.5 rounded-xl bg-page border border-border-default flex items-center gap-3">
-                  <MapPin className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                  <MapPin className="w-4 h-4 text-accent-cyan flex-shrink-0" />
                   <div className="overflow-hidden">
                     <p className="text-[10px] text-text-secondary">Maps & Street View</p>
                     {lead.google_maps_url ? (
-                      <a href={lead.google_maps_url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-cyan-400 hover:underline truncate flex items-center gap-1">
+                      <a href={lead.google_maps_url} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-accent-cyan hover:underline truncate flex items-center gap-1">
                         <span>View map listing</span>
                         <ExternalLink className="w-3 h-3" />
                       </a>
@@ -269,7 +269,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
 
                 {/* Google Rating */}
                 <div className="p-3.5 rounded-xl bg-page border border-border-default flex items-center gap-3">
-                  <Star className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                  <Star className="w-4 h-4 text-accent-amber flex-shrink-0" />
                   <div>
                     <p className="text-[10px] text-text-secondary">Google Reputation</p>
                     <p className="text-xs font-semibold text-text-primary">
@@ -283,19 +283,19 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
             {/* Tags Manager */}
             <div className="space-y-3">
               <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
-                <Tag className="w-3.5 h-3.5 text-brand-primary" />
+                <Tag className="w-3.5 h-3.5 text-brand-link" />
                 Tags
               </h3>
               <div className="flex flex-wrap gap-2 items-center">
                 {lead.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 border border-border-default text-xs text-text-primary font-medium"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-card-hover border border-border-default text-xs text-text-primary font-medium"
                   >
                     <span>{tag}</span>
                     <button
                       onClick={() => handleRemoveTag(tag)}
-                      className="text-slate-500 hover:text-rose-400 ml-1"
+                      className="text-text-muted hover:text-accent-rose ml-1"
                     >
                       &times;
                     </button>
@@ -309,11 +309,11 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                     value={newTagInput}
                     onChange={(e) => setNewTagInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') handleAddTag(); }}
-                    className="bg-page border border-border-default rounded-lg px-2.5 py-1 text-xs text-text-primary placeholder-slate-500 focus:outline-none focus:border-blue-500 w-24"
+                    className="form-control rounded-lg px-2.5 py-1 text-xs text-text-primary placeholder-slate-500 focus:outline-none focus:border-blue-500 w-24"
                   />
                   <button
                     onClick={handleAddTag}
-                    className="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-text-primary"
+                    className="p-1 rounded-lg bg-card-hover hover:bg-page text-text-primary"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
@@ -324,7 +324,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
             {/* Notes Section */}
             <div className="space-y-4">
               <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
-                <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                <FileText className="w-3.5 h-3.5 text-accent-indigo" />
                 Personal Notes & Interaction History
               </h3>
 
@@ -335,13 +335,13 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                   placeholder="Record phone call outcomes, proposal details, or follow-up notes..."
                   value={newNoteContent}
                   onChange={(e) => setNewNoteContent(e.target.value)}
-                  className="w-full bg-page border border-border-default rounded-xl p-3 text-xs text-text-primary placeholder-slate-500 focus:outline-none focus:border-blue-500 resize-none transition-colors"
+                  className="form-control w-full rounded-xl p-3 text-xs text-text-primary placeholder-slate-500 focus:outline-none focus:border-blue-500 resize-none transition-colors"
                 />
                 <div className="flex justify-end">
                   <button
                     type="submit"
                     disabled={isSubmittingNote || !newNoteContent.trim()}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-brand-primary hover:bg-brand-hover disabled:opacity-40 text-text-primary font-semibold text-xs transition-colors"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-brand-primary hover:bg-brand-hover disabled:opacity-40 text-white font-semibold text-xs transition-colors"
                   >
                     <Send className="w-3 h-3" />
                     <span>Save Note</span>
@@ -366,14 +366,14 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
             {/* Timeline Events */}
             <div className="space-y-3 pt-4 border-t border-border-default">
               <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                <Clock className="w-3.5 h-3.5 text-accent-cyan" />
                 Activity Timeline
               </h3>
               <div className="space-y-2">
                 {activities.map((act) => (
                   <div key={act.id} className="flex items-center justify-between text-xs p-2 rounded-lg bg-page">
                     <span className="text-text-primary">{act.description}</span>
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-text-muted">
                       {new Date(act.created_at).toLocaleDateString()}
                     </span>
                   </div>

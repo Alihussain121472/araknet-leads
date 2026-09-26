@@ -17,11 +17,11 @@ export const Header: React.FC<HeaderProps> = ({
   onQuickRun,
   onRefresh,
 }) => {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
   return (
-    <nav className="h-20 px-8 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+    <header className="h-20 px-8 flex items-center justify-between sticky top-0 z-10 bg-card border-b border-border-default shadow-sm">
       <div>
         <h1 className="logo-text text-xl">{title}</h1>
         <p className="text-[var(--text-secondary)] mt-0.5 text-xs">{subtitle}</p>
@@ -42,11 +42,12 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Theme Toggle */}
         <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
           className="btn-ghost p-2 rounded-xl"
           title="Toggle Theme"
+          aria-label={mounted && resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          {mounted && theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          {mounted && resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>
 
         {/* Refresh button */}
@@ -72,12 +73,12 @@ export const Header: React.FC<HeaderProps> = ({
             </>
           ) : (
             <>
-              <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+              <Sparkles className="w-3.5 h-3.5 text-white" />
               <span>Quick Scan</span>
             </>
           )}
         </button>
       </div>
-    </nav>
+    </header>
   );
 };

@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     };
 
     const leads = await getLeads(filters);
-    return NextResponse.json({ success: true, count: leads.length, leads });
+    return NextResponse.json({ success: true, count: leads.length, leads }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

@@ -38,16 +38,16 @@ export const INDUSTRIES = [
 ];
 
 export const STATUS_COLORS: Record<string, { bg: string; text: string; border: string; label: string }> = {
-  new: { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/30', label: 'New Lead' },
-  contacted: { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/30', label: 'Contacted' },
-  proposal_sent: { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/30', label: 'Proposal Sent' },
-  won: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/30', label: 'Deal Won' },
-  lost: { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/30', label: 'Lost' },
+  new: { bg: 'bg-blue-500/10', text: 'text-accent-blue', border: 'border-blue-500/30', label: 'New Lead' },
+  contacted: { bg: 'bg-amber-500/10', text: 'text-accent-amber', border: 'border-amber-500/30', label: 'Contacted' },
+  proposal_sent: { bg: 'bg-purple-500/10', text: 'text-accent-purple', border: 'border-purple-500/30', label: 'Proposal Sent' },
+  won: { bg: 'bg-emerald-500/10', text: 'text-accent-emerald', border: 'border-emerald-500/30', label: 'Deal Won' },
+  lost: { bg: 'bg-rose-500/10', text: 'text-accent-rose', border: 'border-rose-500/30', label: 'Lost' },
 };
 
 export const WEBSITE_STATUS_BADGES: Record<string, { bg: string; text: string; label: string }> = {
-  no_website: { bg: 'bg-rose-500/15', text: 'text-rose-400', label: 'Not listed' },
-  outdated: { bg: 'bg-amber-500/15', text: 'text-amber-400', label: 'Review needed' },
-  active: { bg: 'bg-emerald-500/15', text: 'text-emerald-400', label: 'Listed' },
-  unreachable: { bg: 'bg-gray-500/15', text: 'text-gray-400', label: 'Unreachable' },
+  no_website: { bg: 'bg-rose-500/15', text: 'text-accent-rose', label: 'Not listed' },
+  outdated: { bg: 'bg-amber-500/15', text: 'text-accent-amber', label: 'Review needed' },
+  active: { bg: 'bg-emerald-500/15', text: 'text-accent-emerald', label: 'Listed' },
+  unreachable: { bg: 'bg-gray-500/15', text: 'text-text-secondary', label: 'Unreachable' },
 };

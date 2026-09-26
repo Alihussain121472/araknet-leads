@@ -172,7 +172,7 @@ export async function updateRun(id: string, updates: Partial<AgentRun>) {
   return run;
 }
 
-const defaults: Partial<UserSettings> = { schedule_enabled: false, schedule_frequency: 'daily', schedule_country: 'Pakistan', schedule_city: 'Karachi', schedule_industry: 'All', notify_on_complete: false, notification_email: '' };
+const defaults: Partial<UserSettings> = { schedule_enabled: false, schedule_frequency: 'daily', schedule_country: '', schedule_city: '', schedule_industry: 'All', notify_on_complete: false, notification_email: '' };
 
 export async function getSettings(): Promise<UserSettings> {
   const auth = await requireAccess();

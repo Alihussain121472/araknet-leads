@@ -232,9 +232,9 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="bg-card border border-border-default rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <div className="bg-card border border-border-default rounded-2xl p-6 shadow-sm dark:shadow-xl relative overflow-hidden">
         <div className="flex items-center gap-2 mb-2">
-          <span className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-brand-primary">
+          <span className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-brand-link">
             <Briefcase className="w-5 h-5" />
           </span>
           <h2 className="text-xl font-bold text-text-primary tracking-tight">
@@ -250,7 +250,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
         {/* LEFT COLUMN: Inputs & Profile */}
         <div className="lg:col-span-5 space-y-6">
           {/* Base Profile Section */}
-          <div className="bg-card border border-border-default rounded-2xl p-5 shadow-xl space-y-4">
+          <div className="bg-card border border-border-default rounded-2xl p-5 shadow-sm dark:shadow-xl space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-border-default">
               <span className="text-sm font-semibold text-text-primary">
                 My Freelancer Profile
@@ -258,7 +258,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
               <button 
                 onClick={handleSaveProfile}
                 disabled={isSavingProfile}
-                className="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
+                className="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-card-hover hover:bg-page text-text-primary transition"
               >
                 {isSavingProfile ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                 Save as Default
@@ -272,7 +272,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
                 value={freelancerProfile}
                 onChange={(e) => setFreelancerProfile(e.target.value)}
                 placeholder="e.g. Senior Web Consultant"
-                className="w-full bg-page border border-border-default rounded-xl px-3 py-2 text-xs text-text-primary"
+                className="form-control w-full rounded-xl px-3 py-2 text-xs text-text-primary"
               />
             </div>
             <div>
@@ -281,7 +281,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
                 rows={2}
                 value={proposedApproach}
                 onChange={(e) => setProposedApproach(e.target.value)}
-                className="w-full bg-page border border-border-default rounded-xl px-3 py-2 text-xs text-text-primary resize-y"
+                className="form-control w-full rounded-xl px-3 py-2 text-xs text-text-primary resize-y"
               />
             </div>
             <div>
@@ -290,13 +290,13 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
                 rows={2}
                 value={relevantExperience}
                 onChange={(e) => setRelevantExperience(e.target.value)}
-                className="w-full bg-page border border-border-default rounded-xl px-3 py-2 text-xs text-text-primary resize-y"
+                className="form-control w-full rounded-xl px-3 py-2 text-xs text-text-primary resize-y"
               />
             </div>
           </div>
 
           {/* Project Details Section */}
-          <div className="bg-card border border-border-default rounded-2xl p-5 shadow-xl space-y-4">
+          <div className="bg-card border border-border-default rounded-2xl p-5 shadow-sm dark:shadow-xl space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-border-default">
               <span className="text-sm font-semibold text-text-primary">
                 Project Details
@@ -308,7 +308,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
                     const l = leads.find(x => x.id === e.target.value);
                     if (l) importFromLead(l);
                   }}
-                  className="text-xs bg-slate-800 text-cyan-300 border border-cyan-500/30 rounded-lg px-2 py-1 max-w-[150px] truncate"
+                  className="form-control text-xs rounded-lg px-2 py-1 max-w-[150px] truncate"
                 >
                   <option value="">Select a Lead...</option>
                   {leads.map(l => (
@@ -319,13 +319,13 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
             </div>
             
             <div>
-              <label className="block text-xs font-medium text-text-primary mb-1">Client Brief or Job Post <span className="text-red-400">*</span></label>
+              <label className="block text-xs font-medium text-text-primary mb-1">Client Brief or Job Post <span className="text-accent-rose">*</span></label>
               <textarea
                 rows={4}
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
                 placeholder="Paste what the client needs or select a lead above..."
-                className="w-full bg-page border border-border-default rounded-xl px-3 py-2 text-xs text-text-primary resize-y"
+                className="form-control w-full rounded-xl px-3 py-2 text-xs text-text-primary resize-y"
               />
             </div>
             
@@ -344,13 +344,13 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
             {isStructured && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">Budget / Pricing</label>
+                  <label className="block text-xs font-medium text-text-muted mb-1">Budget / Pricing</label>
                   <input
                     type="text"
                     value={budgetRange}
                     onChange={(e) => setBudgetRange(e.target.value)}
                     placeholder="e.g. $4,000"
-                    className="w-full bg-page border border-border-default rounded-xl px-3 py-2 text-xs"
+                    className="form-control w-full rounded-xl px-3 py-2 text-xs"
                   />
                 </div>
               </div>
@@ -370,19 +370,19 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
         {/* RIGHT COLUMN: Output & Saved */}
         <div className="lg:col-span-7 space-y-5">
           {/* Editor Card */}
-          <div className="bg-card border border-border-default rounded-2xl p-5 shadow-xl flex flex-col min-h-[500px]">
+          <div className="bg-card border border-border-default rounded-2xl p-5 shadow-sm dark:shadow-xl flex flex-col min-h-[500px]">
             <div className="flex items-center justify-between pb-4 border-b border-border-default mb-4">
               <span className="text-sm font-semibold text-text-primary flex items-center gap-2">
-                <Edit3 className="w-4 h-4 text-brand-primary" /> 
+                <Edit3 className="w-4 h-4 text-brand-link" />
                 {activeProposalId ? 'Editing Saved Draft' : 'New Draft'}
               </span>
               <div className="flex items-center gap-2">
                 <button
                   onClick={copyToClipboard}
                   disabled={!draftContent}
-                  className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 disabled:opacity-50"
+                  className="text-xs px-3 py-1.5 rounded-lg bg-card-hover hover:bg-page text-text-primary transition flex items-center gap-1.5 disabled:opacity-50"
                 >
-                  {copiedFull ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedFull ? <Check className="w-3.5 h-3.5 text-accent-emerald" /> : <Copy className="w-3.5 h-3.5" />}
                   Copy
                 </button>
                 <button
@@ -401,11 +401,11 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
                 value={draftContent}
                 onChange={(e) => setDraftContent(e.target.value)}
                 disabled={loading}
-                className="flex-grow w-full bg-page border border-border-default rounded-xl px-4 py-4 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-blue-500 font-sans resize-none disabled:opacity-60"
+                className="flex-grow form-control w-full rounded-xl px-4 py-4 text-sm text-text-primary placeholder-slate-500 focus:outline-none focus:border-blue-500 font-sans resize-none disabled:opacity-60"
                 placeholder="Your draft will appear here..."
               />
             ) : (
-              <div className="flex-grow flex flex-col items-center justify-center text-slate-500 text-center">
+              <div className="flex-grow flex flex-col items-center justify-center text-text-muted text-center">
                 <Sparkles className="w-10 h-10 mb-4 opacity-20" />
                 <p>No draft yet. Generate a new one or select a saved proposal below.</p>
               </div>
@@ -413,15 +413,15 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
           </div>
 
           {/* Saved Proposals List */}
-          <div className="bg-card border border-border-default rounded-2xl p-5 shadow-xl">
+          <div className="bg-card border border-border-default rounded-2xl p-5 shadow-sm dark:shadow-xl">
             <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-amber-400" /> Saved Proposals
+              <Clock className="w-4 h-4 text-accent-amber" /> Saved Proposals
             </h3>
             
             {isLoadingProposals ? (
-              <div className="text-xs text-slate-500 py-4 text-center">Loading...</div>
+              <div className="text-xs text-text-muted py-4 text-center">Loading...</div>
             ) : savedProposals.length === 0 ? (
-              <div className="text-xs text-slate-500 py-4 text-center">No saved proposals yet.</div>
+              <div className="text-xs text-text-muted py-4 text-center">No saved proposals yet.</div>
             ) : (
               <div className="grid gap-3">
                 {savedProposals.map(prop => (
@@ -438,7 +438,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
                       <div className="font-semibold text-sm text-text-primary mb-1">
                         {prop.business_name || 'Unknown Client'}
                       </div>
-                      <div className="text-xs text-slate-500 flex items-center gap-2">
+                      <div className="text-xs text-text-muted flex items-center gap-2">
                         <span>{new Date(prop.created_at).toLocaleDateString()}</span>
                         <span>•</span>
                         <span className="bg-slate-200 dark:bg-slate-800 px-1.5 rounded">{prop.is_structured ? 'Structured' : 'Outreach'}</span>
@@ -446,7 +446,7 @@ export const ProposalAgentSection: React.FC<ProposalAgentSectionProps> = ({
                     </div>
                     <button 
                       onClick={(e) => deleteSavedProposal(prop.id, e)}
-                      className="text-slate-400 hover:text-red-400 transition p-1"
+                      className="text-text-muted hover:text-accent-rose transition p-1"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

@@ -10,9 +10,9 @@ export function GrowthSection({ leads, busy, onBusyChange, onRefresh, onOpenLead
   const [health, setHealth] = useState<Health | null>(null);
   const [healthLoading, setHealthLoading] = useState(false);
   const [error, setError] = useState('');
-  const [country, setCountry] = useState('Pakistan');
-  const [citiesText, setCitiesText] = useState('Karachi, Lahore, Islamabad');
-  const [industry, setIndustry] = useState('Restaurant');
+  const [country, setCountry] = useState('');
+  const [citiesText, setCitiesText] = useState('');
+  const [industry, setIndustry] = useState('All');
   const [batch, setBatch] = useState(10);
   const [campaign, setCampaign] = useState(false);
   const [progress, setProgress] = useState<string[]>([]);
@@ -33,6 +33,17 @@ export function GrowthSection({ leads, busy, onBusyChange, onRefresh, onOpenLead
     finally { setHealthLoading(false); }
   };
   useEffect(() => { void refreshHealth(); return () => { stop.current = true; }; }, []);
+  useEffect(() => {
+    void apiFetch('/api/settings').then(async response => {
+      if (!response.ok) return;
+      const data = await response.json();
+      const saved = data.settings;
+      if (!saved) return;
+      setCountry(typeof saved.schedule_country === 'string' ? saved.schedule_country : '');
+      setCitiesText(typeof saved.schedule_city === 'string' ? saved.schedule_city : '');
+      setIndustry(typeof saved.schedule_industry === 'string' && saved.schedule_industry ? saved.schedule_industry : 'All');
+    }).catch(() => undefined);
+  }, []);
   const selectLead = (lead: Lead) => { setSelectedId(lead.id); setDraft(leadIntelligence(lead).draft); setCopied(false); };
   const runCampaign = async () => {
     if (busy || !health?.databaseReady || !country.trim() || !cities.length || cities.length > 5 || cities.some(city => city.length > 120)) return;
@@ -52,12 +63,12 @@ export function GrowthSection({ leads, busy, onBusyChange, onRefresh, onOpenLead
     finally { setCampaign(false); onBusyChange(false); }
   };
   const panel = 'rounded-2xl border border-border-default bg-card p-5 space-y-4';
-  const field = 'w-full rounded-lg border border-border-default bg-page p-3 text-sm';
+  const field = 'form-control w-full rounded-lg p-3 text-sm';
   return <div className="space-y-6">
-    {error && <p role="alert" className="rounded-xl bg-rose-950 p-4 text-rose-200">{error}</p>}
+    {error && <p role="alert" className="rounded-xl bg-rose-50 dark:bg-rose-950 p-4 text-accent-rose">{error}</p>}
     <section className={panel}>
-      <div className="flex justify-between gap-3"><h2 className="text-lg font-bold">Setup health</h2><button disabled={healthLoading} onClick={refreshHealth} className="text-sm text-brand-primary disabled:opacity-50">{healthLoading ? 'Checking...' : 'Check again'}</button></div>
-      <p className={health?.databaseReady ? 'text-emerald-400 text-sm' : 'text-amber-300 text-sm'}>{health?.message || 'Checking your database connection...'}</p>
+      <div className="flex justify-between gap-3"><h2 className="text-lg font-bold">Setup health</h2><button disabled={healthLoading} onClick={refreshHealth} className="text-sm text-brand-link disabled:opacity-50">{healthLoading ? 'Checking...' : 'Check again'}</button></div>
+      <p className={health?.databaseReady ? 'text-accent-emerald text-sm' : 'text-accent-amber text-sm'}>{health?.message || 'Checking your database connection...'}</p>
       {health && <div className="flex flex-wrap gap-4 text-xs text-text-secondary"><span>Directory: {health.directory}</span><span>Scheduler: {health.cronConfigured ? health.scheduleEnabled ? 'Enabled' : 'Ready; enable in Agent Control' : 'Needs configuration'}</span></div>}
     </section>
     <section className={panel}>
@@ -69,21 +80,21 @@ export function GrowthSection({ leads, busy, onBusyChange, onRefresh, onOpenLead
         <label className="text-sm">Cities, separated by commas<textarea className={field} value={citiesText} disabled={busy} onChange={e=>setCitiesText(e.target.value)} /></label>
         <label className="text-sm">Results per city<select className={field} value={batch} disabled={busy} onChange={e=>setBatch(Number(e.target.value))}>{[5,10,20].map(n=><option key={n} value={n}>{n}</option>)}</select></label>
       </div>
-      <div className="flex flex-wrap items-center gap-4"><button onClick={runCampaign} disabled={busy || !health?.databaseReady || !country.trim() || !cities.length || cities.length > 5} className="rounded-lg bg-brand-primary px-5 py-3 text-sm font-semibold disabled:opacity-40">{campaign ? 'Searching...' : `Search ${cities.length} cities`}</button><span className="text-xs text-text-secondary">Up to {Math.min(cities.length,5)*batch} results before deduplication</span>{campaign && <button onClick={()=>{stop.current=true;setProgress(lines=>[...lines,'Stop requested; current city will finish.']);}} className="text-sm text-amber-300">Stop after this city</button>}</div>
-      {cities.length > 5 && <p role="alert" className="text-sm text-amber-300">Use five cities or fewer per campaign.</p>}
+      <div className="flex flex-wrap items-center gap-4"><button onClick={runCampaign} disabled={busy || !health?.databaseReady || !country.trim() || !cities.length || cities.length > 5} className="rounded-lg bg-brand-primary px-5 py-3 text-sm font-semibold disabled:opacity-40 text-white">{campaign ? 'Searching...' : `Search ${cities.length} cities`}</button><span className="text-xs text-text-secondary">Up to {Math.min(cities.length,5)*batch} results before deduplication</span>{campaign && <button onClick={()=>{stop.current=true;setProgress(lines=>[...lines,'Stop requested; current city will finish.']);}} className="text-sm text-accent-amber">Stop after this city</button>}</div>
+      {cities.length > 5 && <p role="alert" className="text-sm text-accent-amber">Use five cities or fewer per campaign.</p>}
       <div role="log" aria-live="polite" className="space-y-1 text-sm text-text-secondary">{progress.map((line,i)=><p key={i}>{line}</p>)}</div>
     </section>
     <div className="grid gap-6 xl:grid-cols-2">
       <section className={panel}>
         <h2 className="text-lg font-bold">Prioritized shortlist</h2><p className="text-sm text-text-secondary">Ranks website opportunity, industry fit, contact availability and review evidence. This is a prospecting score, not a conversion prediction.</p>
         <div className="flex flex-wrap gap-4 text-sm"><label>Minimum priority <select className="bg-page p-2 rounded" value={minScore} onChange={e=>setMinScore(Number(e.target.value))}>{[0,40,60,80].map(n=><option key={n}>{n}</option>)}</select></label><label><input type="checkbox" checked={phoneOnly} onChange={e=>setPhoneOnly(e.target.checked)} /> Phone listed</label><label><input type="checkbox" checked={newOnly} onChange={e=>setNewOnly(e.target.checked)} /> New leads only</label></div>
-        <p className="text-xs text-slate-500">{ranked.length} matching leads</p>
-        <div className="max-h-[560px] overflow-y-auto space-y-2">{ranked.slice(0,100).map(({lead,insight})=><button key={lead.id} onClick={()=>selectLead(lead)} className={`w-full rounded-xl border p-4 text-left ${selectedId===lead.id?'border-blue-500 bg-blue-950/40':'border-border-default bg-page'}`}><div className="flex justify-between gap-3"><strong className="text-sm">{lead.business_name}</strong><span className="text-cyan-400 font-bold">{insight.priority}/100</span></div><p className="text-xs text-text-secondary mt-1">{lead.city} · {lead.industry}</p><p className="text-xs text-text-secondary mt-2">{insight.nextAction}</p></button>)}</div>
+        <p className="text-xs text-text-muted">{ranked.length} matching leads</p>
+        <div className="max-h-[560px] overflow-y-auto space-y-2">{ranked.slice(0,100).map(({lead,insight})=><button key={lead.id} onClick={()=>selectLead(lead)} className={`w-full rounded-xl border p-4 text-left ${selectedId===lead.id?'border-blue-500 bg-brand-soft':'border-border-default bg-page'}`}><div className="flex justify-between gap-3"><strong className="text-sm">{lead.business_name}</strong><span className="text-accent-cyan font-bold">{insight.priority}/100</span></div><p className="text-xs text-text-secondary mt-1">{lead.city} · {lead.industry}</p><p className="text-xs text-text-secondary mt-2">{insight.nextAction}</p></button>)}</div>
         {!ranked.length && <p className="text-sm text-text-secondary">No matching leads yet. Complete setup, run a search, or loosen your filters.</p>}
       </section>
       <section className={panel}>
         <h2 className="text-lg font-bold">Evidence and outreach draft</h2>
-        {selected && insight ? <><h3 className="font-semibold">{selected.business_name}</h3><dl className="text-sm space-y-2">{Object.entries(insight.breakdown).map(([key,value])=><div key={key} className="flex justify-between"><dt className="text-text-secondary">{key}</dt><dd>{value} points</dd></div>)}</dl><p className="text-xs text-text-secondary">Data completeness: {insight.completeness}% · Source: {selected.source_provider} · Last updated: {insight.age ?? 'unknown'} days ago. A missing field is not proof that a business lacks that capability.</p><p className="text-sm text-cyan-300">Next step: {insight.nextAction}</p><label className="block text-sm">Editable draft<textarea rows={10} value={draft} onChange={e=>{setDraft(e.target.value);setCopied(false);}} className={field} /></label><p className="text-xs text-slate-500">Template based on listing data. Verify claims, add your identity and review before sending. Nothing is sent automatically.</p><div className="flex gap-4"><button className="rounded-lg bg-brand-primary px-4 py-2 text-sm" onClick={async()=>{try{await navigator.clipboard.writeText(draft);setCopied(true);}catch{setError('Clipboard unavailable. Select and copy the draft manually.');}}}>{copied?'Copied':'Copy draft'}</button><button className="text-sm text-brand-primary" onClick={()=>onOpenLead(selected)}>Open full lead</button></div></> : <p className="text-sm text-text-secondary">Choose a lead to see its score breakdown, next step and personalized draft.</p>}
+        {selected && insight ? <><h3 className="font-semibold">{selected.business_name}</h3><dl className="text-sm space-y-2">{Object.entries(insight.breakdown).map(([key,value])=><div key={key} className="flex justify-between"><dt className="text-text-secondary">{key}</dt><dd>{value} points</dd></div>)}</dl><p className="text-xs text-text-secondary">Data completeness: {insight.completeness}% · Source: {selected.source_provider} · Last updated: {insight.age ?? 'unknown'} days ago. A missing field is not proof that a business lacks that capability.</p><p className="text-sm text-accent-cyan">Next step: {insight.nextAction}</p><label className="block text-sm">Editable draft<textarea rows={10} value={draft} onChange={e=>{setDraft(e.target.value);setCopied(false);}} className={field} /></label><p className="text-xs text-text-muted">Template based on listing data. Verify claims, add your identity and review before sending. Nothing is sent automatically.</p><div className="flex gap-4"><button className="rounded-lg bg-brand-primary px-4 py-2 text-sm text-white" onClick={async()=>{try{await navigator.clipboard.writeText(draft);setCopied(true);}catch{setError('Clipboard unavailable. Select and copy the draft manually.');}}}>{copied?'Copied':'Copy draft'}</button><button className="text-sm text-brand-link" onClick={()=>onOpenLead(selected)}>Open full lead</button></div></> : <p className="text-sm text-text-secondary">Choose a lead to see its score breakdown, next step and personalized draft.</p>}
       </section>
     </div>
   </div>;

@@ -9,16 +9,23 @@ const config: Config = {
   darkMode: ["class", '[data-theme="dark"]'],
   theme: {
     extend: {
+      fontFamily: { sans: ['var(--font-inter)', 'Arial', 'sans-serif'] },
       colors: {
         page: "var(--bg-page)",
         card: "var(--bg-card)",
         "card-hover": "var(--bg-card-hover)",
         terminal: "var(--bg-terminal)",
         input: "var(--bg-input)",
+        accent: {
+          blue: "var(--accent-blue)", cyan: "var(--accent-cyan)",
+          amber: "var(--accent-amber)", emerald: "var(--accent-emerald)",
+          rose: "var(--accent-rose)", purple: "var(--accent-purple)", indigo: "var(--accent-indigo)",
+        },
         border: {
           default: "var(--border-default)",
           subtle: "var(--border-subtle)",
           strong: "var(--border-strong)",
+          input: "var(--border-input)",
         },
         text: {
           primary: "var(--text-primary)",
@@ -30,6 +37,8 @@ const config: Config = {
           primary: "var(--brand-primary)",
           hover: "var(--brand-hover)",
           glow: "var(--brand-glow)",
+          link: "var(--brand-link)",
+          soft: "var(--brand-soft)",
         },
         term: {
           green: "var(--terminal-green)",

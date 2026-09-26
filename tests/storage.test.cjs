@@ -4,7 +4,8 @@ const fs = require('node:fs');
 const ts = require('typescript');
 const Module = require('node:module');
 const tables = new Map();
-function matches(doc, query) { return Object.entries(query).every(([key, value]) => value && typeof value === 'object' && '$lte' in value ? doc[key] <= value.$lte : doc[key] === value); }
+function getPath(doc, path) { return path.split('.').reduce((value, part) => value == null ? undefined : value[part], doc); }
+function matches(doc, query) { return Object.entries(query).every(([key, value]) => value && typeof value === 'object' && '$lte' in value ? getPath(doc, key) <= value.$lte : getPath(doc, key) === value); }
 function collection(name) {
  if (!tables.has(name)) tables.set(name, []);
  const rows = tables.get(name);
@@ -31,7 +32,7 @@ function collection(name) {
 }
 const file = 'lib/storage.ts';
 const mod = new Module(require('node:path').resolve(file), module); mod.paths = module.paths;
-mod.require = name => name === 'server-only' ? {} : name === './mongodb' ? {database:async()=>({collection})} : name === './auth' ? {requireAccess:async()=>{}} : require(name);
+mod.require = name => name === 'server-only' ? {} : name === './mongodb' ? {database:async()=>({collection})} : name === './auth' ? {requireAccess:async()=>({sub:'test-user',role:'user'})} : require(name);
 mod._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText,file);
 const store = mod.exports;
 test('lead deduplication preserves updates; notes and tags persist; delete cleans related records', async()=>{

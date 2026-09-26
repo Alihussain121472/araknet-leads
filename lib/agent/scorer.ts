@@ -156,11 +156,11 @@ export function auditAndScore(business: {
   // Generate personalized sales pitch reason
   let reason = '';
   if (website_status === 'no_website') {
-    reason = `${business.industry} listing with ${reviews > 0 ? `${reviews} customer reviews` : 'active local presence'} but no website listed. Pitch: ${best_service_to_pitch}.`;
+    reason = `${business.industry} listing with ${reviews > 0 ? `${reviews} customer reviews` : 'active local presence'} but no website listed. Pitch: ${best_service_to_pitch}. Please verify manually before outreach.`;
   } else if (website_status === 'outdated') {
-    reason = `Website address suggests a possible modernization opportunity (${business.website_url}). Pitch: ${best_service_to_pitch}.`;
+    reason = `Website address suggests a possible modernization opportunity (${business.website_url}). Pitch: ${best_service_to_pitch}. Please verify manually before outreach.`;
   } else {
-    reason = `Website is listed. Automation potential is an industry estimate. Pitch: ${best_service_to_pitch}.`;
+    reason = `Website is listed. Automation potential is an industry estimate. Pitch: ${best_service_to_pitch}. Please verify manually before outreach.`;
   }
 
   // Select top 3 relevant services

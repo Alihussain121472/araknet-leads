@@ -7,8 +7,19 @@ export function databaseErrorMessage(error: unknown): string {
     return 'MongoDB rejected credentials: Username or password in MONGODB_URI is incorrect (make sure to remove any < or > brackets).';
   }
 
-  // Extract server-level detail from MongoServerSelectionError
-  if (err?.name === 'MongoServerSelectionError' && err?.reason?.servers) {
+  if (err?.code === 'ENOTFOUND' || err?.code === 'EAI_AGAIN') {
+    return 'MongoDB hostname could not be resolved. Check the MongoDB URI and DNS/network settings.';
+  }
+
+  if (err?.name === 'MongoParseError') {
+    return 'MONGODB_URI is not a valid MongoDB connection string. Check its format and encoding.';
+  }
+
+  // A server-selection failure usually means Atlas Network Access, DNS, or a paused cluster.
+  if (err?.name === 'MongoServerSelectionError') {
+    if (!err?.reason?.servers) {
+      return 'MongoDB servers could not be reached. Check that the Atlas cluster is active and its Network Access rules allow the deployment.';
+    }
     const serverDetails: string[] = [];
     for (const [, desc] of err.reason.servers) {
       if (desc?.error?.message) {
@@ -16,10 +27,13 @@ export function databaseErrorMessage(error: unknown): string {
       }
     }
     if (serverDetails.length > 0) {
-      return `MongoDB connection issue: ${serverDetails[0]}`;
+      return `MongoDB connection issue. Check Atlas Network Access and cluster availability: ${serverDetails[0].replace(/mongodb(?:\+srv)?:\/\/[^\s]+/gi, 'the configured cluster')}`;
     }
+    return 'MongoDB servers could not be reached. Check that the Atlas cluster is active and its Network Access rules allow the deployment.';
   }
 
-  const sanitizedMsg = msg.replace(/\/\/[^:]+:[^@]+@/, '//***:***@');
+  const sanitizedMsg = msg
+    .replace(/mongodb(?:\+srv)?:\/\/[^\s]+/gi, 'the configured MongoDB cluster')
+    .replace(/\/\/[^:]+:[^@]+@/, '//***:***@');
   return `MongoDB connection error: ${sanitizedMsg}`;
 }

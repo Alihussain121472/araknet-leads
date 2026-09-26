@@ -10,7 +10,7 @@ import { LeadDetailModal } from '@/components/sections/LeadDetailModal';
 import { SettingsSection } from '@/components/sections/SettingsSection';
 import { ProposalAgentSection } from '@/components/sections/ProposalAgentSection';
 import { apiFetch } from '@/lib/api-client';
-import { Lead, DashboardStats, AgentRun, AgentLog, LeadActivity, LeadNote } from '@/lib/types';
+import { Lead, DashboardStats, AgentRun, AgentLog, LeadActivity, LeadNote, UserSettings } from '@/lib/types';
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -29,6 +29,7 @@ export default function DashboardPage() {
   const [logs, setLogs] = useState<AgentLog[]>([]);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isLoadingLeads, setIsLoadingLeads] = useState<boolean>(true);
+  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
 
   const [error, setError] = useState('');
 
@@ -64,6 +65,18 @@ export default function DashboardPage() {
     }
   }, []);
 
+  const fetchSettings = useCallback(async () => {
+    try {
+      const res = await apiFetch('/api/settings');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.settings) setUserSettings(data.settings);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error fetching settings');
+    }
+  }, []);
+
   // Fetch agent status & logs
   const fetchAgentStatus = useCallback(async () => {
     try {
@@ -84,7 +97,17 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchLeads();
     fetchStats();
+    fetchSettings();
     fetchAgentStatus();
+  }, [fetchLeads, fetchStats, fetchSettings, fetchAgentStatus]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      void fetchLeads();
+      void fetchStats();
+      void fetchAgentStatus();
+    }, 15000);
+    return () => clearInterval(timer);
   }, [fetchLeads, fetchStats, fetchAgentStatus]);
 
   useEffect(() => {
@@ -140,10 +163,16 @@ export default function DashboardPage() {
   // Quick run from header button
   const handleQuickRun = async () => {
     setActiveTab('agent');
+    const country = userSettings?.schedule_country?.trim() || '';
+    const city = userSettings?.schedule_city?.trim() || '';
+    if (!country || !city) {
+      setError('Choose a target country and city in the Discovery Agent before using Quick Scan.');
+      return;
+    }
     await handleTriggerRun({
-      country: 'United States',
-      city: 'Austin',
-      industry: 'Clinic & Healthcare',
+      country,
+      city,
+      industry: userSettings?.schedule_industry || 'All',
       maxResults: 8,
     });
   };
@@ -233,6 +262,8 @@ export default function DashboardPage() {
   const handleSaveSettings = async (newSettings: any) => {
     const response = await apiFetch('/api/settings', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(newSettings)});
     if (!response.ok) throw new Error('Settings could not be saved');
+    const data = await response.json();
+    if (data.settings) setUserSettings(data.settings);
   };
 
   // Tab Header Details
@@ -271,7 +302,7 @@ export default function DashboardPage() {
   const headerInfo = getTabHeader();
 
   return (
-    <div className="flex min-h-screen bg-page text-text-primary selection:bg-brand-primary selection:text-text-primary">
+    <div className="flex min-h-screen bg-page text-text-primary ">
       {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
@@ -289,12 +320,13 @@ export default function DashboardPage() {
           onRefresh={() => {
             fetchLeads();
             fetchStats();
+            fetchSettings();
             fetchAgentStatus();
           }}
         />
 
         <main className="p-4 md:p-8 max-w-7xl w-full mx-auto flex-1">
-          {error && <div role="alert" className="mb-5 rounded-xl border border-rose-800 bg-rose-950 p-4 text-sm">{error}<button onClick={() => setError('')} className="ml-4 underline">Dismiss</button></div>}
+          {error && <div role="alert" className="mb-5 rounded-xl border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950 text-accent-rose p-4 text-sm">{error}<button onClick={() => setError('')} className="ml-4 underline">Dismiss</button></div>}
           <form action="/api/auth/logout" method="post" className="mb-4 text-right"><button className="text-xs text-text-secondary hover:text-text-primary">Sign out</button></form>
           {activeTab === 'overview' && (
             <OverviewSection

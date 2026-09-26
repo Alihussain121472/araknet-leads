@@ -19,27 +19,27 @@ export default async function AdminDashboard() {
             <h1 className="text-2xl font-bold text-text-primary">System Admin Dashboard</h1>
             <p className="text-sm text-text-secondary">Manage all users and monitor platform usage.</p>
           </div>
-          <Link href="/" className="px-4 py-2 bg-slate-800 rounded-lg hover:bg-slate-700">
+          <Link href="/" className="px-4 py-2 bg-card-hover rounded-lg hover:bg-card-hover">
             Back to App
           </Link>
         </div>
 
         <div className="grid grid-cols-3 gap-6">
-          <div className="bg-card border border-border-default p-6 rounded-2xl shadow-xl">
+          <div className="bg-card border border-border-default p-6 rounded-2xl shadow-sm dark:shadow-xl">
             <h3 className="text-text-secondary font-medium">Total Registered Users</h3>
             <p className="text-3xl font-bold text-text-primary mt-2">{stats.totalUsers}</p>
           </div>
-          <div className="bg-card border border-border-default p-6 rounded-2xl shadow-xl">
+          <div className="bg-card border border-border-default p-6 rounded-2xl shadow-sm dark:shadow-xl">
             <h3 className="text-text-secondary font-medium">System-Wide Leads Discovered</h3>
-            <p className="text-3xl font-bold text-cyan-400 mt-2">{stats.totalLeadsSystemWide}</p>
+            <p className="text-3xl font-bold text-accent-cyan mt-2">{stats.totalLeadsSystemWide}</p>
           </div>
-          <div className="bg-card border border-border-default p-6 rounded-2xl shadow-xl">
+          <div className="bg-card border border-border-default p-6 rounded-2xl shadow-sm dark:shadow-xl">
             <h3 className="text-text-secondary font-medium">System-Wide Agent Runs</h3>
-            <p className="text-3xl font-bold text-amber-400 mt-2">{stats.totalRunsSystemWide}</p>
+            <p className="text-3xl font-bold text-accent-amber mt-2">{stats.totalRunsSystemWide}</p>
           </div>
         </div>
 
-        <div className="bg-card border border-border-default rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-card border border-border-default rounded-2xl shadow-sm dark:shadow-xl overflow-hidden">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-page text-text-secondary text-sm">
@@ -48,12 +48,12 @@ export default async function AdminDashboard() {
                 <th className="p-4">Joined At</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-border-default">
               {users.map(u => (
-                <tr key={u.id} className="hover:bg-slate-800/50">
+                <tr key={u.id} className="hover:bg-card-hover">
                   <td className="p-4">{u.email}</td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${u.role === 'admin' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-text-primary'}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${u.role === 'admin' ? 'bg-amber-500/20 text-accent-amber' : 'bg-card-hover text-text-primary'}`}>
                       {u.role.toUpperCase()}
                     </span>
                   </td>

@@ -21,15 +21,15 @@ interface SettingsSectionProps {
 
 export const SettingsSection: React.FC<SettingsSectionProps> = ({ onSaveSettings }) => {
   const [settings, setSettings] = useState<UserSettings>({
-    user_id: 'default_user',
+    user_id: '',
     google_places_api_key: '',
     serpapi_api_key: '',
     apify_api_key: '',
     openai_api_key: '',
     schedule_enabled: false,
     schedule_frequency: 'daily',
-    schedule_country: 'United States',
-    schedule_city: 'Austin',
+    schedule_country: '',
+    schedule_city: '',
     schedule_industry: 'All',
     notify_on_complete: false,
     notification_email: '',
@@ -66,12 +66,12 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({ onSaveSettings
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl">
-      {saveError && <p role="alert" className="text-rose-400">{saveError}</p>}
+      {saveError && <p role="alert" className="text-accent-rose">{saveError}</p>}
       {/* API Key Vault */}
-      <div className="p-6 rounded-2xl bg-card border border-border-default backdrop-blur-md shadow-xl space-y-6">
+      <div className="p-6 rounded-2xl bg-card border border-border-default backdrop-blur-md shadow-sm dark:shadow-xl space-y-6">
         <div>
           <h3 className="text-base font-bold text-text-primary flex items-center gap-2">
-            <Key className="w-4 h-4 text-brand-primary" />
+            <Key className="w-4 h-4 text-brand-link" />
             Directory API Keys
           </h3>
           <p className="text-xs text-text-secondary mt-1">
@@ -90,7 +90,7 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({ onSaveSettings
                 href="https://console.cloud.google.com/google/maps-apis/overview"
                 target="_blank"
                 rel="noreferrer"
-                className="text-[11px] text-brand-primary hover:underline flex items-center gap-1"
+                className="text-[11px] text-brand-link hover:underline flex items-center gap-1"
               >
                 <span>Get Google Places Key</span>
                 <ExternalLink className="w-3 h-3" />
@@ -102,7 +102,7 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({ onSaveSettings
                 placeholder="AIzaSy..."
                 value={settings.google_places_api_key || ''}
                 onChange={(e) => setSettings({ ...settings, google_places_api_key: e.target.value })}
-                className="w-full bg-page border border-border-default rounded-xl px-3.5 py-2.5 text-xs text-text-primary font-mono focus:outline-none focus:border-blue-500 transition-colors"
+                className="form-control w-full rounded-xl px-3.5 py-2.5 text-xs text-text-primary font-mono focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
           </div>
@@ -117,7 +117,7 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({ onSaveSettings
                 href="https://serpapi.com/manage-api-key"
                 target="_blank"
                 rel="noreferrer"
-                className="text-[11px] text-brand-primary hover:underline flex items-center gap-1"
+                className="text-[11px] text-brand-link hover:underline flex items-center gap-1"
               >
                 <span>Get SerpAPI Key</span>
                 <ExternalLink className="w-3 h-3" />
@@ -128,7 +128,7 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({ onSaveSettings
               placeholder="e.g. 84bfb8d..."
               value={settings.serpapi_api_key || ''}
               onChange={(e) => setSettings({ ...settings, serpapi_api_key: e.target.value })}
-              className="w-full bg-page border border-border-default rounded-xl px-3.5 py-2.5 text-xs text-text-primary font-mono focus:outline-none focus:border-blue-500 transition-colors"
+              className="form-control w-full rounded-xl px-3.5 py-2.5 text-xs text-text-primary font-mono focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
 
@@ -137,10 +137,10 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({ onSaveSettings
       </div>
 
       {/* Scheduled Automation Settings */}
-      <div className="p-6 rounded-2xl bg-card border border-border-default backdrop-blur-md shadow-xl space-y-6">
+      <div className="p-6 rounded-2xl bg-card border border-border-default backdrop-blur-md shadow-sm dark:shadow-xl space-y-6">
         <div>
           <h3 className="text-base font-bold text-text-primary flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-purple-400" />
+            <Calendar className="w-4 h-4 text-accent-purple" />
             Agent Schedule Configuration
           </h3>
           <p className="text-xs text-text-secondary mt-1">
@@ -154,8 +154,9 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({ onSaveSettings
             <select
               value={settings.schedule_country}
               onChange={(e) => setSettings({ ...settings, schedule_country: e.target.value })}
-              className="w-full bg-page border border-border-default rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-blue-500"
+              className="form-control w-full rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-blue-500"
             >
+              <option value="">Choose a country</option>
               {Object.keys(COUNTRIES_AND_CITIES).map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
@@ -168,7 +169,8 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({ onSaveSettings
               type="text"
               value={settings.schedule_city}
               onChange={(e) => setSettings({ ...settings, schedule_city: e.target.value })}
-              className="w-full bg-page border border-border-default rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-blue-500"
+              placeholder="Enter a city"
+              className="form-control w-full rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-blue-500"
             />
           </div>
         </div>
@@ -181,14 +183,14 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({ onSaveSettings
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-text-primary font-bold text-xs shadow-lg shadow-blue-500/25 transition-all"
+          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-primary hover:bg-brand-hover text-white font-bold text-xs shadow-sm dark:shadow-lg shadow-blue-500/25 transition-all"
         >
           <Save className="w-4 h-4" />
           <span>{saving ? 'Saving...' : 'Save Settings'}</span>
         </button>
 
         {saveSuccess && (
-          <span className="text-xs text-emerald-400 flex items-center gap-1 font-semibold">
+          <span className="text-xs text-accent-emerald flex items-center gap-1 font-semibold">
             <CheckCircle2 className="w-4 h-4" />
             Settings saved successfully!
           </span>

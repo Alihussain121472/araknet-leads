@@ -11,7 +11,7 @@ export async function GET() {
       status: latest ? latest.status : 'idle',
       latestRun: latest,
       recentLogs: latest ? latest.logs : [],
-    });
+    }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

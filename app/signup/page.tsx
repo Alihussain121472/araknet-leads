@@ -60,7 +60,7 @@ export default function SignupPage() {
             <ul className="space-y-6 text-slate-600 dark:text-[#94A3B8]">
               <li className="flex items-start gap-4">
                 <div className="p-2 bg-slate-50 dark:bg-[#0B1120] rounded-md border border-slate-200 dark:border-[#1E293B] mt-1">
-                  <Database className="w-4 h-4 text-brand-primary dark:text-[#0EA5E9]" />
+                  <Database className="w-4 h-4 text-brand-link dark:text-[#0EA5E9]" />
                 </div>
                 <div>
                   <h3 className="text-slate-900 dark:text-[#F8FAFC] font-semibold text-sm">No manual prospecting.</h3>
@@ -69,7 +69,7 @@ export default function SignupPage() {
               </li>
               <li className="flex items-start gap-4">
                 <div className="p-2 bg-slate-50 dark:bg-[#0B1120] rounded-md border border-slate-200 dark:border-[#1E293B] mt-1">
-                  <ShieldAlert className="w-4 h-4 text-brand-primary dark:text-[#0EA5E9]" />
+                  <ShieldAlert className="w-4 h-4 text-brand-link dark:text-[#0EA5E9]" />
                 </div>
                 <div>
                   <h3 className="text-slate-900 dark:text-[#F8FAFC] font-semibold text-sm">Built-in digital audits.</h3>
@@ -78,7 +78,7 @@ export default function SignupPage() {
               </li>
               <li className="flex items-start gap-4">
                 <div className="p-2 bg-slate-50 dark:bg-[#0B1120] rounded-md border border-slate-200 dark:border-[#1E293B] mt-1">
-                  <BarChart3 className="w-4 h-4 text-brand-primary dark:text-[#0EA5E9]" />
+                  <BarChart3 className="w-4 h-4 text-brand-link dark:text-[#0EA5E9]" />
                 </div>
                 <div>
                   <h3 className="text-slate-900 dark:text-[#F8FAFC] font-semibold text-sm">Know who to pitch.</h3>
@@ -89,23 +89,14 @@ export default function SignupPage() {
           </div>
         </div>
 
-        {/* Mock Terminal Window */}
-        <div className="relative z-10 mt-12 bg-slate-900 dark:bg-[#0B1120] border border-slate-800 dark:border-[#1E293B] rounded-lg p-4 font-mono text-[10px] text-slate-300 dark:text-[#94A3B8] shadow-2xl overflow-hidden">
-          <div className="flex gap-1.5 mb-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-slate-700"></div>
-          </div>
-          <div className="text-brand-primary dark:text-[#0EA5E9] mb-1">$ araknet scan --city="Local" --industry="Clinics"</div>
-          <div className="text-emerald-400">✔ Found 42 businesses</div>
-          <div className="text-emerald-400">✔ Audited 38 websites</div>
-          <div className="mt-2 text-slate-400 dark:text-slate-500">
-            {`{`}
-            <br />&nbsp;&nbsp;"business": "Downtown Dental",
-            <br />&nbsp;&nbsp;"website_status": <span className="text-rose-400">"outdated"</span>,
-            <br />&nbsp;&nbsp;"opportunity_score": <span className="text-amber-400">92</span>
-            <br />{`}`}
-          </div>
+        <div className="relative z-10 mt-12 rounded-lg border border-border-default bg-card p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary">A workspace built around your data</p>
+          <p className="mt-2 text-sm leading-relaxed text-text-primary">
+            Your account starts empty. After you choose a market and run a search, only the results saved to your workspace appear in the dashboard.
+          </p>
+          <p className="mt-3 text-xs leading-relaxed text-text-secondary">
+            We do not display prefilled businesses, scores, or activity examples.
+          </p>
         </div>
       </div>
 
@@ -126,7 +117,7 @@ export default function SignupPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div role="alert" className="p-3 rounded-md bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs">
+              <div role="alert" className="p-3 rounded-md bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-600 dark:text-accent-rose text-xs">
                 {error}
               </div>
             )}
@@ -139,7 +130,7 @@ export default function SignupPage() {
                 autoComplete="email"
                 required
                 placeholder="you@example.com"
-                className="w-full rounded-md border border-slate-300 dark:border-[#1E293B] bg-white dark:bg-[#111827] px-4 py-2.5 text-sm text-slate-900 dark:text-[#F8FAFC] placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-[#0EA5E9] focus:border-blue-500 dark:focus:border-[#0EA5E9] transition-all"
+                className="form-control w-full rounded-lg px-4 py-2.5 text-sm transition-colors"
               />
             </div>
 
@@ -151,13 +142,13 @@ export default function SignupPage() {
                 autoComplete="new-password"
                 required
                 minLength={6}
-                className="w-full rounded-md border border-slate-300 dark:border-[#1E293B] bg-white dark:bg-[#111827] px-4 py-2.5 text-sm text-slate-900 dark:text-[#F8FAFC] focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-[#0EA5E9] focus:border-blue-500 dark:focus:border-[#0EA5E9] transition-all"
+                className="form-control w-full rounded-lg px-4 py-2.5 text-sm transition-colors"
               />
             </div>
 
             <button 
               disabled={loading}
-              className="w-full rounded-md bg-brand-primary dark:bg-[#0EA5E9] px-4 py-3 text-sm font-bold text-white dark:text-[#F8FAFC] hover:bg-blue-700 dark:hover:bg-[#0284C7] transition-all shadow-md dark:shadow-[0_0_15px_rgba(14,165,233,0.3)] disabled:opacity-50 active:scale-[0.98]"
+              className="w-full rounded-md bg-brand-primary px-4 py-3 text-sm font-bold text-white dark:text-[#F8FAFC] hover:bg-blue-700  transition-all shadow-md dark:shadow-[0_0_15px_rgba(14,165,233,0.3)] disabled:opacity-50 active:scale-[0.98]"
             >
               {loading ? 'Creating account...' : 'Start finding leads'}
             </button>
