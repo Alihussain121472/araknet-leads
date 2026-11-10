@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://araknet.tech';
-  const pages = ['', '/tools', '/tools/website-cost-calculator', '/tools/marketing-budget-calculator', '/tools/local-seo-checklist', '/privacy', '/terms'];
+  const pages = ['', '/tools', '/tools/website-cost-calculator', '/tools/marketing-budget-calculator', '/tools/local-seo-checklist', '/privacy', '/terms'] as const;
   return pages.map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),
