@@ -1,4 +1,4 @@
-import { runDiscoveryAgent } from './lib/agent/discovery';
+import { runDiscoveryAgent } from '../../lib/agent/discovery';
 
 (async () => {
   try {

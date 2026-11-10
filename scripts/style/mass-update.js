@@ -38,5 +38,5 @@ function processDirectory(dir) {
   }
 }
 
-processDirectory('./app');
-processDirectory('./components');
+processDirectory(path.join(__dirname, '..', '..', 'app'));
+processDirectory(path.join(__dirname, '..', '..', 'components'));

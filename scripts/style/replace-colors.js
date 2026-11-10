@@ -43,5 +43,5 @@ function processDir(dir) {
   }
 }
 
-processDir(path.join(__dirname, 'app'));
-processDir(path.join(__dirname, 'components'));
+processDir(path.join(__dirname, '..', '..', 'app'));
+processDir(path.join(__dirname, '..', '..', 'components'));
