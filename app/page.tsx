@@ -1,393 +1,73 @@
-'use client';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { ArrowRight, BarChart3, Calculator, CheckCircle2, FileText, Search, Sparkles } from 'lucide-react';
+import { PublicGrowthHub } from '@/components/PublicGrowthHub';
+import { AdSlot } from '@/components/AdSlot';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Sidebar } from '@/components/Sidebar';
-import { Header } from '@/components/Header';
-import { OverviewSection } from '@/components/sections/OverviewSection';
-import { AgentControlSection } from '@/components/sections/AgentControlSection';
-import { LeadsTableSection } from '@/components/sections/LeadsTableSection';
-import { LeadDetailModal } from '@/components/sections/LeadDetailModal';
-import { SettingsSection } from '@/components/sections/SettingsSection';
-import { ProposalAgentSection } from '@/components/sections/ProposalAgentSection';
-import { apiFetch } from '@/lib/api-client';
-import { Lead, DashboardStats, AgentRun, AgentLog, LeadActivity, LeadNote, UserSettings } from '@/lib/types';
+export const metadata: Metadata = {
+  title: 'Free Marketing Tools for Small Businesses | Araknet',
+  description: 'Free website cost, marketing budget, SEO, and proposal tools for local businesses, freelancers, and agencies.',
+  alternates: { canonical: 'https://araknet.tech/' },
+};
 
-export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState<string>('overview');
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [stats, setStats] = useState<DashboardStats>({
-    totalLeads: 0,
-    leadsContacted: 0,
-    proposalsSent: 0,
-    dealsWon: 0,
-    conversionRate: 0,
-    highOpportunityCount: 0,
-  });
-  const [activities, setActivities] = useState<LeadActivity[]>([]);
-  const [agentRunning, setAgentRunning] = useState<boolean>(false);
-  const [latestRun, setLatestRun] = useState<AgentRun | null>(null);
-  const [logs, setLogs] = useState<AgentLog[]>([]);
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [isLoadingLeads, setIsLoadingLeads] = useState<boolean>(true);
-  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
+const tools = [
+  { title: 'Website Cost Calculator', description: 'Estimate a realistic website budget before speaking to a freelancer or agency.', href: '/tools/website-cost-calculator', icon: Calculator },
+  { title: 'Marketing Budget Calculator', description: 'Build a simple monthly marketing budget around your goals and business size.', href: '/tools/marketing-budget-calculator', icon: BarChart3 },
+  { title: 'Local SEO Checklist', description: 'Follow a practical checklist to help your business get found in local search.', href: '/tools/local-seo-checklist', icon: Search },
+  { title: 'Proposal Generator', description: 'Turn a project brief into a clear, professional proposal in minutes.', href: '/proposals', icon: FileText },
+];
 
-  const [error, setError] = useState('');
-
-  const [newlyFetchedLeads, setNewlyFetchedLeads] = useState<Lead[]>([]);
-
-  // Fetch leads
-  const fetchLeads = useCallback(async () => {
-    setIsLoadingLeads(true);
-    try {
-      const res = await apiFetch('/api/leads');
-      if (res.ok) {
-        const data = await res.json();
-        setLeads(data.leads || []);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching leads');
-    } finally {
-      setIsLoadingLeads(false);
-    }
-  }, []);
-
-  // Fetch KPI stats
-  const fetchStats = useCallback(async () => {
-    try {
-      const res = await apiFetch('/api/stats');
-      if (res.ok) {
-        const data = await res.json();
-        if (data.stats) setStats(data.stats);
-        if (data.recentActivities) setActivities(data.recentActivities);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching stats');
-    }
-  }, []);
-
-  const fetchSettings = useCallback(async () => {
-    try {
-      const res = await apiFetch('/api/settings');
-      if (res.ok) {
-        const data = await res.json();
-        if (data.settings) setUserSettings(data.settings);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching settings');
-    }
-  }, []);
-
-  // Fetch agent status & logs
-  const fetchAgentStatus = useCallback(async () => {
-    try {
-      const res = await apiFetch('/api/agent/status');
-      if (res.ok) {
-        const data = await res.json();
-        if (data.latestRun) {
-          setLatestRun(data.latestRun);
-          if (!agentRunning) setLogs(data.latestRun.logs || []);
-        }
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching agent status');
-    }
-  }, []);
-
-  // Initial load
-  useEffect(() => {
-    fetchLeads();
-    fetchStats();
-    fetchSettings();
-    fetchAgentStatus();
-  }, [fetchLeads, fetchStats, fetchSettings, fetchAgentStatus]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      void fetchLeads();
-      void fetchStats();
-      void fetchAgentStatus();
-    }, 15000);
-    return () => clearInterval(timer);
-  }, [fetchLeads, fetchStats, fetchAgentStatus]);
-
-  useEffect(() => {
-    if (!agentRunning) return;
-    const timer = setInterval(() => { void fetchAgentStatus(); }, 5000);
-    return () => clearInterval(timer);
-  }, [agentRunning, fetchAgentStatus]);
-
-  // Trigger agent run
-  const handleTriggerRun = async (params: {
-    country: string;
-    city: string;
-    industry: string;
-    maxResults: number;
-  }) => {
-    if (agentRunning) return;
-    setError('');
-    setAgentRunning(true);
-    setNewlyFetchedLeads([]);
-    setLogs([
-      {
-        time: new Date().toLocaleTimeString(),
-        level: 'info',
-        message: `Agent dispatched to ${params.city}, ${params.country} [${params.industry}]...`,
-      }
-    ]);
-
-    try {
-      const res = await apiFetch('/api/agent/run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
-      });
-
-      if (!res.ok) { const data = await res.json(); throw new Error(data.error || 'Search failed'); }
-      if (res.ok) {
-        const data = await res.json();
-        if (data.logs) setLogs(data.logs);
-        if (data.leads && data.leads.length > 0) setNewlyFetchedLeads(data.leads);
-        if (!data.success) throw new Error(data.error || 'Discovery did not complete');
-        // Refresh leads & stats
-        await fetchLeads();
-        await fetchStats();
-        await fetchAgentStatus();
-      }
-    } catch (err) {
-      setLogs(prev => [...prev, {time:new Date().toLocaleTimeString(),level:'error',message:err instanceof Error ? err.message : 'Search failed'}]);
-    } finally {
-      setAgentRunning(false);
-    }
-  };
-
-  // Quick run from header button
-  const handleQuickRun = async () => {
-    setActiveTab('agent');
-    const country = userSettings?.schedule_country?.trim() || '';
-    const city = userSettings?.schedule_city?.trim() || '';
-    if (!country || !city) {
-      setError('Choose a target country and city in the Discovery Agent before using Quick Scan.');
-      return;
-    }
-    await handleTriggerRun({
-      country,
-      city,
-      industry: userSettings?.schedule_industry || 'All',
-      maxResults: 8,
-    });
-  };
-
-  // Update lead status (e.g. new -> contacted)
-  const handleUpdateStatus = async (id: string, newStatus: any) => {
-    try {
-      const res = await apiFetch(`/api/leads/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lead_status: newStatus }),
-      });
-
-      if (res.ok) {
-        setLeads((prev) =>
-          prev.map((l) => (l.id === id ? { ...l, lead_status: newStatus } : l))
-        );
-        if (selectedLead && selectedLead.id === id) {
-          setSelectedLead((prev) => (prev ? { ...prev, lead_status: newStatus } : null));
-        }
-        await fetchStats();
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update lead status');
-    }
-  };
-
-  // Update tags
-  const handleUpdateTags = async (id: string, tags: string[]) => {
-    try {
-      const res = await apiFetch(`/api/leads/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tags }),
-      });
-
-      setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, tags } : l)));
-      setSelectedLead(prev => prev?.id === id ? { ...prev, tags } : prev);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update tags');
-    }
-  };
-
-  // Add personal note
-  const handleAddNote = async (leadId: string, content: string): Promise<LeadNote | null> => {
-    try {
-      const res = await apiFetch(`/api/leads/${leadId}/notes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        await fetchStats();
-        return data.note;
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add note');
-    }
-    return null;
-  };
-
-  // Delete lead
-  const handleDeleteLead = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this lead?')) return;
-    try {
-      const res = await apiFetch(`/api/leads/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setLeads((prev) => prev.filter((l) => l.id !== id));
-        setSelectedLead(null);
-        await fetchStats();
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete lead');
-    }
-  };
-
-  // Export to CSV
-  const handleExportCsv = (selectedIds?: string[]) => {
-    const query = new URLSearchParams({format:'csv'});
-    if (selectedIds?.length) query.set('ids',selectedIds.join(','));
-    window.open('/api/leads/export?' + query.toString(), '_blank');
-  };
-
-  // Save Settings
-  const handleSaveSettings = async (newSettings: any) => {
-    const response = await apiFetch('/api/settings', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(newSettings)});
-    if (!response.ok) throw new Error('Settings could not be saved');
-    const data = await response.json();
-    if (data.settings) setUserSettings(data.settings);
-  };
-
-  // Tab Header Details
-  const getTabHeader = () => {
-    switch (activeTab) {
-      case 'overview':
-        return {
-          title: 'Executive Overview',
-          subtitle: 'Real-time metrics, conversion funnel, and prime opportunities',
-        };
-      case 'agent':
-        return {
-          title: 'Discover Business Leads',
-          subtitle: 'Configure target markets, trigger discovery runs, and inspect live logs to find your clients leads with ai agent',
-        };
-      case 'leads':
-        return {
-          title: 'My Leads',
-          subtitle: `Discovered business candidates (${leads.length} total) with digital presence audit`,
-        };
-      case 'proposals':
-        return {
-          title: 'Proposals',
-          subtitle: 'Generate targeted proposals for your selected leads',
-        };
-      case 'settings':
-        return {
-          title: 'System Settings',
-          subtitle: 'API keys, system configuration, and preferences',
-        };
-      default:
-        return { title: 'Dashboard', subtitle: 'Lead Discovery Platform' };
-    }
-  };
-
-  const headerInfo = getTabHeader();
-
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen bg-page text-text-primary ">
-      {/* Sidebar Navigation */}
-      <Sidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        agentRunning={agentRunning}
-      />
+    <main>
+      <header className="border-b border-border-default bg-page/95 backdrop-blur sticky top-0 z-20">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
+          <Link href="/" className="flex items-center gap-2 text-lg font-bold">
+            <span className="brand-mark"><Sparkles className="h-4 w-4" /></span> Araknet
+          </Link>
+          <nav className="hidden items-center gap-6 text-sm text-text-secondary md:flex">
+            <Link href="#tools" className="hover:text-brand-link">Free tools</Link>
+            <Link href="#how-it-works" className="hover:text-brand-link">How it works</Link>
+            <span className="text-xs font-semibold uppercase tracking-wide text-accent-emerald">100% free tools</span>
+          </nav>
+          <a href="#tools" className="btn-primary rounded-lg px-3 py-2 text-sm font-semibold md:hidden">Explore tools</a>
+        </div>
+      </header>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header
-          title={headerInfo.title}
-          subtitle={headerInfo.subtitle}
-          agentRunning={agentRunning}
-          onQuickRun={handleQuickRun}
-          onRefresh={() => {
-            fetchLeads();
-            fetchStats();
-            fetchSettings();
-            fetchAgentStatus();
-          }}
-        />
+      <section className="discovery-banner border-b border-border-default">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:py-28">
+          <div>
+            <p className="mb-4 text-sm font-bold uppercase tracking-[0.18em] text-brand-link">Free growth tools for local businesses</p>
+            <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight md:text-6xl">Make smarter marketing decisions before you spend.</h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-text-secondary">Use practical calculators, checklists, and proposal tools to price your website, plan your marketing, improve local visibility, and win better work.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a href="#tools" className="btn-primary inline-flex items-center gap-2 rounded-xl px-5 py-3 font-semibold">Explore free tools <ArrowRight className="h-4 w-4" /></a>
+              <a href="#how-it-works" className="btn-ghost inline-flex items-center gap-2 rounded-xl px-5 py-3 font-semibold">See how it works</a>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-5 text-sm text-text-secondary">
+              {['No signup', 'No paywall', 'Built for small businesses'].map((item) => <span key={item} className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-accent-emerald" />{item}</span>)}
+            </div>
+          </div>
+          <PublicGrowthHub />
+        </div>
+      </section>
 
-        <main className="p-4 md:p-8 max-w-7xl w-full mx-auto flex-1">
-          {error && <div role="alert" className="mb-5 rounded-xl border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950 text-accent-rose p-4 text-sm">{error}<button onClick={() => setError('')} className="ml-4 underline">Dismiss</button></div>}
-          <form action="/api/auth/logout" method="post" className="mb-4 text-right"><button className="text-xs text-text-secondary hover:text-text-primary">Sign out</button></form>
-          {activeTab === 'overview' && (
-            <OverviewSection
-              stats={stats}
-              recentLeads={leads}
-              activities={activities}
-              onOpenLead={(lead) => setSelectedLead(lead)}
-              onLaunchAgent={() => setActiveTab('agent')}
-              onViewAllLeads={() => setActiveTab('leads')}
-            />
-          )}
+      <AdSlot />
 
-          {activeTab === 'agent' && (
-            <AgentControlSection
-              agentRunning={agentRunning}
-              onTriggerRun={handleTriggerRun}
-              latestRun={latestRun}
-              logs={logs}
-              newlyFetchedLeads={newlyFetchedLeads}
-            />
-          )}
+      <section id="tools" className="mx-auto max-w-7xl px-5 py-20">
+        <div className="max-w-2xl"><p className="text-sm font-bold uppercase tracking-[0.18em] text-brand-link">Start here</p><h2 className="mt-3 text-3xl font-bold md:text-4xl">Tools that answer expensive questions</h2><p className="mt-4 text-text-secondary">Get a useful answer in a few minutes, then use the next step to improve your business.</p></div>
+        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {tools.map(({ title, description, href, icon: Icon }) => <Link key={href} href={href} className="card group p-6 transition hover:-translate-y-1 hover:border-brand-primary"><Icon className="h-6 w-6 text-brand-link" /><h3 className="mt-5 text-lg font-semibold">{title}</h3><p className="mt-2 text-sm leading-6 text-text-secondary">{description}</p><span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-link">Use tool <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" /></span></Link>)}
+        </div>
+      </section>
 
-          {activeTab === 'leads' && (
-            <LeadsTableSection
-              leads={leads}
-              onOpenLead={(lead) => setSelectedLead(lead)}
-              onUpdateStatus={handleUpdateStatus}
-              onExportCsv={handleExportCsv}
-              isLoading={isLoadingLeads}
-              onCreateProposal={(lead) => {
-                setSelectedLead(lead);
-                setActiveTab('proposals');
-              }}
-            />
-          )}
+      <section id="how-it-works" className="border-y border-border-default bg-card">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 md:grid-cols-3">
+          {[['01', 'Choose a tool', 'Start with the question you need to answer today.'], ['02', 'Get a clear baseline', 'Use transparent assumptions instead of confusing jargon.'], ['03', 'Leave with an answer', 'Every calculator and checklist works without an account.']].map(([number, title, description]) => <div key={number}><span className="text-sm font-bold text-brand-link">{number}</span><h3 className="mt-3 text-xl font-semibold">{title}</h3><p className="mt-2 text-text-secondary">{description}</p></div>)}
+        </div>
+      </section>
 
-          {activeTab === 'proposals' && (
-            <ProposalAgentSection leads={leads} selectedLeadForProposal={selectedLead} />
-          )}
-
-          {activeTab === 'settings' && (
-            <SettingsSection onSaveSettings={handleSaveSettings} />
-          )}
-        </main>
-      </div>
-
-      {/* Slide-over Lead Detail Drawer */}
-      {selectedLead && activeTab !== 'proposals' && (
-        <LeadDetailModal
-          lead={selectedLead}
-          onClose={() => setSelectedLead(null)}
-          onUpdateStatus={handleUpdateStatus}
-          onUpdateTags={handleUpdateTags}
-          onAddNote={handleAddNote}
-          onDeleteLead={handleDeleteLead}
-          onCreateProposal={(lead) => {
-            setSelectedLead(lead);
-            setActiveTab('proposals');
-          }}
-        />
-      )}
-    </div>
+      <section className="mx-auto max-w-4xl px-5 py-20 text-center"><h2 className="text-3xl font-bold">A useful answer, without a paywall</h2><p className="mx-auto mt-4 max-w-2xl text-text-secondary">Bookmark Araknet and return whenever you need a quick marketing estimate, checklist, or planning baseline.</p><a href="#tools" className="btn-primary mt-7 inline-flex items-center gap-2 rounded-xl px-6 py-3 font-semibold">Browse all free tools <ArrowRight className="h-4 w-4" /></a></section>
+    </main>
   );
 }

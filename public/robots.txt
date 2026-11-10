@@ -1,2 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /signup
+Sitemap: https://araknet.tech/sitemap.xml

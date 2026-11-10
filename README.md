@@ -1,6 +1,8 @@
-# Araknet Business Discovery
+# Araknet Business Discovery and Free Growth Tools
 
 Owner dashboard built with Next.js 16, React 19, TypeScript and MongoDB Atlas.
+
+The public homepage and `/tools` directory are intentionally free to use without an account or subscription. They provide calculators and checklists for small businesses; clearly labeled ad placements can be connected to an approved advertising provider after the site has useful content and sufficient traffic.
 
 ## Setup
 
@@ -28,3 +30,9 @@ Priority scores explain website opportunity, industry fit, contact availability 
 The intended production project is `araknet-leads-c463` in `alihussain121472s-projects`, serving araknet.tech. The repository explicitly selects the Next.js Vercel framework. Check project identity before deploying: older local links may point to a separate project.
 
 MongoDB Atlas must permit the deployment's network connections. Existing records are preserved. Do not commit environment files or credentials.
+
+## Free-site monetization
+
+The public pages are designed for organic search and advertising rather than paid subscriptions. Apply for an advertising account only after publishing helpful, original content and completing the provider's site review. Never ask visitors to click ads, and keep ads clearly separate from tool controls.
+
+After approval, connect the provider's publisher script and ad units through the deployment environment. Submit `https://araknet.tech/sitemap.xml` in Google Search Console and monitor indexing and Core Web Vitals. Search Console does not pay for clicks; advertising-provider approval and valid traffic are required for revenue.

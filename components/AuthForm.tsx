@@ -29,7 +29,7 @@ export function AuthForm({ mode, googleEnabled = false, initialError = '', passw
       const response = await fetch(`/api/auth/${mode}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ email: form.get('email'), password }), signal: AbortSignal.timeout(20000) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'We could not complete your request. Please try again.');
-      window.location.assign('/');
+      window.location.assign('/dashboard');
     } catch (caught) {
       setError(caught instanceof Error && caught.name !== 'TimeoutError' ? caught.message : 'The request timed out. Please try again.');
       setLoading(false);

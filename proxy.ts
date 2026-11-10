@@ -37,6 +37,12 @@ export default async function proxy(request: NextRequest) {
 
   // 3. Public Routes
   if (
+    path === '/' ||
+    path === '/tools' ||
+    path.startsWith('/tools/') ||
+    path === '/privacy' ||
+    path === '/terms' ||
+    path === '/sitemap.xml' ||
     path === '/api/auth/login' ||
     path === '/api/auth/signup' ||
     path === '/api/auth/logout' ||
@@ -48,7 +54,7 @@ export default async function proxy(request: NextRequest) {
 
   // 4. Redirect logged-in users away from auth pages
   if (path === '/login' || path === '/signup') {
-    return authenticated ? NextResponse.redirect(new URL('/', request.url)) : NextResponse.next();
+    return authenticated ? NextResponse.redirect(new URL('/dashboard', request.url)) : NextResponse.next();
   }
 
   // 5. Protected Routes

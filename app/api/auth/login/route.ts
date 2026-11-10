@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
   });
 
   const response = request.headers.get('accept')?.includes('json') 
-    ? NextResponse.json({ success: true, redirect: '/' }) 
-    : NextResponse.redirect(new URL('/', request.url), 303);
+    ? NextResponse.json({ success: true, redirect: '/dashboard' })
+    : NextResponse.redirect(new URL('/dashboard', request.url), 303);
 
   response.cookies.set('araknet_session', token, {
     httpOnly: true,
