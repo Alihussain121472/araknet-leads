@@ -16,6 +16,9 @@ export function Footer() {
       color: 'var(--text-muted)'
     }}>
       <div style={{ display: 'flex', gap: '24px' }}>
+        <Link href="/about" className="auth-link" style={{ color: 'var(--text-muted)' }}>About</Link>
+        <Link href="/contact" className="auth-link" style={{ color: 'var(--text-muted)' }}>Contact</Link>
+        <Link href="/disclaimer" className="auth-link" style={{ color: 'var(--text-muted)' }}>Disclaimer</Link>
         <Link href="/privacy" className="auth-link" style={{ color: 'var(--text-muted)' }}>Privacy Policy</Link>
         <Link href="/terms" className="auth-link" style={{ color: 'var(--text-muted)' }}>Terms of Service</Link>
       </div>

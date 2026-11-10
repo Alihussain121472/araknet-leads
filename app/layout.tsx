@@ -5,6 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://araknet.tech'),
   title: "Araknet | Business Lead Discovery",
   description: "Find local businesses that need your services. Araknet audits their digital presence and generates outreach proposals automatically.",
   openGraph: {
